@@ -15,7 +15,6 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\back\\launch-locally.js"
-        },
-       
+        }
     ]
 }
