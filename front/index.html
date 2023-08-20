@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style></style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Charts in a grid" />
+    <script>
+      document.documentElement.dataset.theme = localStorage.theme === "light" ? "light" : "dark";
+    </script>
+
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+
+    <title>Charts</title>
+    <link href="app.css" rel="stylesheet" />
+  </head>
+  <body>
+    <dialog>
+      <div>Dialog content</div>
+    </dialog>
+    <header>
+      <button class="dialog-visibility">
+        <svg viewBox="0 0 20 20"></svg>
+      </button>
+      <button class="theme" aria-label="Theme">
+        <svg viewBox="0 0 24 24"></svg>
+      </button>
+    </header>
+
+    <main>
+      <div>
+        <div>Content</div>
+      </div>
+      <div>
+        <div>Content</div>
+      </div>
+      <div>
+        <div>Content</div>
+      </div>
+      <div>
+        <div>Content</div>
+      </div>
+      <div>
+        <div>Content</div>
+      </div>
+      <div>
+        <div>Content</div>
+      </div>
+      <div>
+        <div>Content</div>
+      </div>
+      <div>
+        <div>Content</div>
+      </div>
+    </main>
+
+    <script type="module" src="app.mjs"></script>
+  </body>
+</html>

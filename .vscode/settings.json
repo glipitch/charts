@@ -1,0 +1,7 @@
+{
+    "fiveServer.browser": [
+
+        "chrome"
+    ],
+    "fiveServer.port": 3001
+}

@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "front",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://192.168.0.17:3001/front/index.html"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "back",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\back\\launch-locally.js"
+        },
+       
+    ]
+}
