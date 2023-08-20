@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://www.svgrepo.com/svg/468572/diagram-bar-uptrend-->
+
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7,15v2m4-4v4m4-6v6m4-8v8"
+        style=" stroke: green; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+    </path>
+    <path d="M3,3V20a1,1,0,0,0,1,1H21"
+        style="fill: none; stroke: #cb3434; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+    </path>
+</svg>
