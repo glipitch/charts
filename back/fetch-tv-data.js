@@ -23,15 +23,19 @@ module.exports = async ({ fetch }) => {
 
     writeFile("data.json", JSON.stringify(filtered));
     //    writeExchanges(filtered);
+    //writeCrypto(allData);
+    //const result = inventory.group(({ type }) => type);
+    console.log('finished');
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function writeCrypto(allData) {
     let crypto = allData.filter(item => item.hasOwnProperty('typespecs'));
     let crypto1 = crypto.filter(item => item.typespecs.includes('crypto'));
     const cryRed = reduce(crypto1);
     const cryde = dedupe(cryRed, ({ symbol, exchange }) => `${symbol}-${exchange}`);
     writeFile("crypto.json", JSON.stringify(cryde));
-    //const result = inventory.group(({ type }) => type);
-    console.log('finished');
 }
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 function writeExchanges(filtered) {
     let exchanges = [];
     filtered.forEach(item => {
