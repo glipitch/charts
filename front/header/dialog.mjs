@@ -8,7 +8,7 @@ d="M4.707 2.293a1 1 0 00-1.414 1.414l6 6a1 1 0 001.414 0l6-6a1 1 0 00-1.414-1.41
 document.querySelector("header").addEventListener("click", async () => {
   if (dialog.open) {
     document.documentElement.dataset.current = "hidden";
-    dialog.style.pointerEvents = "none";
+
     dialog.close();
   } else {
     open();
@@ -17,5 +17,5 @@ document.querySelector("header").addEventListener("click", async () => {
 export const open = () => {
   document.documentElement.dataset.current = "visible";
   dialog.show();
-  dialog.style.pointerEvents = "auto";
+
 }

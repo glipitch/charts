@@ -17,12 +17,14 @@ dialog {
     left: 0;
     right: 0;
     z-index: 1;
+    pointer-events: none;
 }
 
 dialog[open] {
     opacity: var(--opacity, 1);
     overflow-y: auto;
     height: 100%;
+    pointer-events: auto;
 }
 
 dialog>* {
