@@ -13,17 +13,26 @@ module.exports = async ({ fetch }) => {
         allData = allData.concat(data.symbols);
         start += 50;
     } while (remaining > 0);
-
     ensureDirectory(targetDirectory);
-
     allData.sort((a, b) => (a.symbol > b.symbol) ? 1 : -1);
-
     writeFile("full-data.json", JSON.stringify(allData));
-
-
     const reducedComboArray = reduce(allData);
     const filtered = dedupe(reducedComboArray, ({ symbol, exchange }) => `${symbol}-${exchange}`);
+
+    filtered.sort((a, b) => (a.exchange > b.exchange) ? 1 : -1);
+
     writeFile("data.json", JSON.stringify(filtered));
+    //    writeExchanges(filtered);
+    let crypto = allData.filter(item => item.hasOwnProperty('typespecs'));
+    let crypto1 = crypto.filter(item => item.typespecs.includes('crypto'));
+    const cryRed = reduce(crypto1);
+    const cryde = dedupe(cryRed, ({ symbol, exchange }) => `${symbol}-${exchange}`);
+    writeFile("crypto.json", JSON.stringify(cryde));
+    //const result = inventory.group(({ type }) => type);
+    console.log('finished');
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function writeExchanges(filtered) {
     let exchanges = [];
     filtered.forEach(item => {
         if (!exchanges.includes(item.exchange)) {
@@ -32,35 +41,7 @@ module.exports = async ({ fetch }) => {
     });
     exchanges.sort();
     writeFile("exchanges.json", JSON.stringify(exchanges));
-
-    let crypto = allData.filter(item => item.hasOwnProperty('typespecs'));
-    let crypto1 = crypto.filter(item => item.typespecs.includes('crypto'));
-
-    const cryRed = reduce(crypto1);
-    const cryde = dedupe(cryRed, ({ symbol, exchange }) => `${symbol}-${exchange}`);
-    writeFile("crypto.json", JSON.stringify(cryde));
-
-
-
-
-    //const result = inventory.group(({ type }) => type);
-
-
-
-
-
-
-
-    console.log('finished');
-
-
-
-
-
-
-
 }
-const sleep = ms => new Promise(r => setTimeout(r, ms));
 function dedupe(reducedComboArray, f) {
     const ids = reducedComboArray.map(f);
     const filtered = reducedComboArray.filter((item, index) => !ids.includes(f(item), index + 1));
