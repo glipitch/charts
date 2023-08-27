@@ -25,6 +25,7 @@ search.addEventListener("input", () => {
     return;
   }
   utilities.debounce(applyFilter, 500)();
+  localStorage.setItem("search", search.value);
 });
 const applyFilter = () => {
   const filtered = markets.filter(market =>
@@ -34,3 +35,4 @@ const applyFilter = () => {
   available.querySelectorAll("tr:not(:first-child)").forEach(x => x.remove());
   filtered.forEach(x => utilities.addRow(available, [x.exchange, x.symbol]));
 };
+search.value = localStorage.getItem("search") || "";
