@@ -18,7 +18,8 @@ table {
     border-collapse: collapse;
     border-width: 2px;
     border-style: solid;
-
+    width: fit-content;
+    margin-bottom: 1rem;
 }
 
 table * {}
@@ -36,6 +37,10 @@ td {
     font-size: .8rem;
 }
 
+td {
+    word-wrap: break-word;
+}
+
 tr:hover {
     background-color: var(--dialog-hover);
 }
@@ -48,24 +53,28 @@ tr:hover {
     color: brown;
 }
 
-td {
-    word-wrap: break-word;
-}
-
 .current td:nth-child(4):hover>button {
     outline: brown solid calc(1rem / 16);
 }
 
-td:nth-child(1) {
-    max-width: 8rem;
+td:nth-child(1),
+th:nth-child(1) {
+    min-width: 6rem;
 }
 
-td:nth-child(2) {
-    width: 8rem;
+td:nth-child(2),
+th:nth-child(2) {
+    min-width: 6rem;
 }
 
-td:nth-child(3) {
-    max-width: 6rem;
+td:nth-child(3),
+th:nth-child(3) {
+    width: 2rem;
+}
+
+td:nth-child(4),
+th:nth-child(4) {
+    width: 1.5rem;
 }
 
 .available {
@@ -73,10 +82,14 @@ td:nth-child(3) {
 }
 
 tr {
-    border-bottom: .5px solid white;
+    border-bottom: .px solid white;
     /* outline: blue solid calc(1rem / 16); */
 }
 
 tr:last-child {
     border-bottom: none;
+}
+
+.search {
+    margin-bottom: 1rem;
 }
