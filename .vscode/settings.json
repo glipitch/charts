@@ -1,3 +1,4 @@
 {
-    "livePreview.portNumber": 3001
+    "livePreview.portNumber": 3001,
+    "debug.toolBarLocation": "hidden"
 }

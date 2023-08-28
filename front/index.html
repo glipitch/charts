@@ -17,54 +17,56 @@
 
 <body>
   <dialog>
-    <h2>Settings</h2>
-    <div class="settings">
-      <div class="dimensions-container">
-        <label for="x">Width</label>
-        <div class="dimensions">
-          <button class="minus">−</button>
-          <input id="x" type="number" min="1" step="1" max="10" />
-          <button class="plus">+</button>
+    <div class="dialog-content">
+      <h2>Settings</h2>
+      <div class="settings">
+        <div class="dimensions-container">
+          <label for="x">Width</label>
+          <div class="dimensions">
+            <button class="minus">−</button>
+            <input id="x" type="number" min="1" step="1" max="10" />
+            <button class="plus">+</button>
+          </div>
         </div>
-      </div>
-      <div class="dimensions-container">
-        <label for="y">Height</label>
-        <div class="dimensions">
-          <button class="minus">−</button>
-          <input id="y" type="number" min="1" step="1" max="10" />
-          <button class="plus">+</button>
+        <div class="dimensions-container">
+          <label for="y">Height</label>
+          <div class="dimensions">
+            <button class="minus">−</button>
+            <input id="y" type="number" min="1" step="1" max="10" />
+            <button class="plus">+</button>
+          </div>
         </div>
-      </div>
-      <div class="opacity-container">
-        <label for="opacity-input">Opacity</label>
-        <input type="range" id="opacity-input" min="0.70" max="1.00" step=".05" list="markers" />
-        <span></span>
-        <datalist id="markers">
+        <div class="opacity-container">
+          <label for="opacity-input">Opacity</label>
+          <input type="range" id="opacity-input" min="0.70" max="1.00" step=".05" list="markers" />
+          <span></span>
+          <datalist id="markers">
 
-        </datalist>
-      </div>
+          </datalist>
+        </div>
 
+      </div>
+      <h3>Current</h3>
+      <table class="current">
+        <tr>
+          <th>Exchange</th>
+          <th>Symbol</th>
+          <th>T</th>
+        </tr>
+      </table>
+      <button class="clear">Clear</button>
+      <h3>Available</h3>
+      <input id="search" type="search" class="search" placeholder="search" spellcheck="false" />
+      <table class="available">
+        <tr>
+          <th>Exchange</th>
+          <th>Symbol</th>
+        </tr>
+        <tr>
+          <td>loading...</td>
+        </tr>
+      </table>
     </div>
-    <h3>Current</h3>
-    <table class="current">
-      <tr>
-        <th>Exchange</th>
-        <th>Symbol</th>
-        <th>T</th>
-      </tr>
-    </table>
-    <button class="clear">Clear</button>
-    <h3>Available</h3>
-    <input id="search" type="search" class="search" placeholder="search" spellcheck="false" />
-    <table class="available">
-      <tr>
-        <th>Exchange</th>
-        <th>Symbol</th>
-      </tr>
-      <tr>
-        <td>loading...</td>
-      </tr>
-    </table>
   </dialog>
   <header>
     <div class="dialog-visibility">
