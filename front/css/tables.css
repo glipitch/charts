@@ -2,11 +2,9 @@
     overflow-y: auto;
     width: 100%;
     display: flex;
-
     max-height: 100%;
     flex-direction: column;
     align-items: center;
-
 }
 
 table {
@@ -16,22 +14,14 @@ table {
     min-height: 10rem;
     overflow-y: auto;
     overflow-x: auto;
-    margin: 1rem;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 90%;
+    /* allows border */
     border-collapse: collapse;
-    scrollbar-width: thick;
     border-width: 2px;
     border-style: solid;
+
 }
 
-
-
-
-table * {
-    font-size: .8rem;
-}
+table * {}
 
 th {
     position: sticky;
@@ -41,9 +31,9 @@ th {
     background-color: var(--dialog-background);
 }
 
-tr,
 td {
     text-align: left;
+    font-size: .8rem;
 }
 
 tr:hover {
@@ -58,29 +48,32 @@ tr:hover {
     color: brown;
 }
 
+td {
+    word-wrap: break-word;
+}
+
 .current td:nth-child(4):hover>button {
     outline: brown solid calc(1rem / 16);
 }
 
 td:nth-child(1) {
-
     max-width: 8rem;
-    word-wrap: break-word;
 }
 
 td:nth-child(2) {
-
-    max-width: 6rem;
-    word-wrap: break-word;
+    width: 8rem;
 }
 
-.current {
-    margin-bottom: 3rem;
+td:nth-child(3) {
+    max-width: 6rem;
+}
+
+.available {
+    margin-bottom: 2rem;
 }
 
 tr {
-
-    border-bottom: .5px solid var(--dialog-hover);
+    border-bottom: .5px solid white;
     /* outline: blue solid calc(1rem / 16); */
 }
 
