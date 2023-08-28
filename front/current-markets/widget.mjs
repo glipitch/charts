@@ -21,4 +21,7 @@ export const addWidget = (item) => {
     container_id: container.id,
   });
 }
-export const remove = id => document.getElementById(prefixId(id)).remove();
+export const remove = id => {
+  const el = document.getElementById(prefixId(id));
+  el.remove()
+};

@@ -51,3 +51,12 @@ export const reloadWidgets = () => {
   });
   visibility.setVisibility();
 };
+const clearCurrentMarkets = () => {
+  charts.forEach(item => {
+    document.getElementById("row_" + item.id)?.remove();
+    widget.remove(item.id);
+  });
+  charts = [];
+  localStorage.setItem("charts", JSON.stringify(charts));
+};
+document.querySelector(".clear").addEventListener("click", () => clearCurrentMarkets());

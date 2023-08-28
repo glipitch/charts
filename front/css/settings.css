@@ -19,10 +19,16 @@
 .opacity-container>input {
     width: 4rem;
     accent-color: var(--opacity-color);
+
 }
 
 .opacity-container>span {
     margin-right: .4rem;
+    cursor: pointer;
+}
+
+.opacity-container>label {
+    cursor: pointer;
 }
 
 .opacity-container,
