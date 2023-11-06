@@ -27,7 +27,7 @@
   --dialog-background: #1e222d;
   --dialog-hover: #2a2e39;
   --dialog-label: #868993;
-  --opacity-color: lightblue;
+  --opacity-color: brown;
 }
 
 :root[data-theme="light"] {
@@ -37,7 +37,7 @@
   --dialog-background: #eeeeee;
   --dialog-hover: #dddddd;
   --dialog-label: darkgray;
-  --opacity-color: darkblue;
+  --opacity-color: brown;
 }
 
 html,
