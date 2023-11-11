@@ -1,0 +1,28 @@
+on:
+  push:
+  schedule:
+    - cron: "0 1 * * *"
+      #every 20 mins '*/20 * * * *'
+      #every hour '0 * * * *'
+      #every 10 mins '*/10 * * * *'
+      #every day at 0100 '0 1 * * *'
+jobs:
+  fetch-tv-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const script = require('./backend/fetch-tv-data.js');
+            script({fetch});
+
+      - name: Push to main
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4.4.2
+        with:
+          folder: pages-root
+          branch: gh-pages
