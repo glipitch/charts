@@ -14,7 +14,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./backend/fetch-tv-data.js');
+            const script = require('./back/fetch-tv-data.js');
             script({fetch});
 
       - name: Push to main
