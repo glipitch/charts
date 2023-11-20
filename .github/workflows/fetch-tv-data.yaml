@@ -2,6 +2,7 @@ on:
   push:
   schedule:
     - cron: "0 1 * * *"
+    
       #every 20 mins '*/20 * * * *'
       #every hour '0 * * * *'
       #every 10 mins '*/10 * * * *'
@@ -19,6 +20,7 @@ jobs:
 
       - name: Push to main
         uses: actions-js/push@master
+
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to gh-pages
