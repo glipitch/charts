@@ -1,0 +1,63 @@
+header {
+    display: flex;
+    height: var(--header-height);
+    cursor: pointer;
+}
+
+header>* {
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+
+
+.dialog-visibility {
+    margin-left: var(--medium);
+}
+
+.theme {
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: var(--medium);
+}
+
+.theme>svg {
+    width: var(--large);
+    fill: var(--highlight-color);
+    fill-rule: evenodd;
+    clip-rule: evenodd;
+}
+
+[data-theme="light"] .theme path:first-child {
+    visibility: hidden;
+}
+
+[data-theme="dark"] .theme path:nth-last-child(-n + 2) {
+    visibility: hidden;
+}
+
+.dialog-visibility>svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: var(--highlight-color);
+    overflow: hidden;
+    width: var(--large);
+    height: var(--large);
+}
+
+.github>svg {
+    width: var(--large);
+    fill: brown;
+}
+
+.dialog-visibility {
+    transition: all 0.3s ease-in-out;
+}
+
+:root[data-current="visible"] .dialog-visibility {
+    transform: rotate(-180deg);
+}

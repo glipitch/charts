@@ -1,0 +1,58 @@
+@import url(settings.css);
+@import url(header.css);
+@import url(main.css);
+@import url(dialog.css);
+@import url(tables.css);
+
+/* .1 to .5 */
+* {
+  --design: .0px;
+  /*background-image: linear-gradient(purple, purple);
+  background-repeat: no-repeat;
+  background-size: 100% var(--design);
+  background-position: 0 center; */
+  outline: solid yellowgreen var(--design);
+}
+
+:root {
+  --large: 1rem;
+  --medium: calc(0.5 * var(--large));
+  --header-height: 1.5rem;
+}
+
+:root[data-theme="dark"] {
+  --background-color: #151924;
+  --highlight-color: #eeeeee;
+  --alternate-row-color: #323232;
+  --dialog-background: #1e222d;
+  --dialog-hover: #2a2e39;
+  --dialog-label: #868993;
+  --opacity-color: brown;
+}
+
+:root[data-theme="light"] {
+  --background-color: beige;
+  --highlight-color: #111111;
+  --alternate-row-color: gray;
+  --dialog-background: #eeeeee;
+  --dialog-hover: #dddddd;
+  --dialog-label: darkgray;
+  --opacity-color: brown;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 16px;
+  background-color: var(--background-color);
+  color: var(--highlight-color);
+  /* required to fill main */
+  height: 100vh;
+  overflow: hidden;
+}

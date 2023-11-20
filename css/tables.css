@@ -1,0 +1,95 @@
+.dialog-content {
+    overflow-y: auto;
+    width: 100%;
+    display: flex;
+    max-height: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+table {
+    color: var(--highlight-color);
+    display: block;
+    max-height: 20rem;
+    min-height: 10rem;
+    overflow-y: auto;
+    overflow-x: auto;
+    /* allows border */
+    border-collapse: collapse;
+    border-width: 2px;
+    border-style: solid;
+    width: fit-content;
+    margin-bottom: 1rem;
+}
+
+table * {}
+
+th {
+    position: sticky;
+    top: 0;
+    text-align: left;
+    /* hide rows that intersect header */
+    background-color: var(--dialog-background);
+}
+
+td {
+    text-align: left;
+    font-size: .8rem;
+}
+
+td {
+    word-wrap: break-word;
+}
+
+tr:hover {
+    background-color: var(--dialog-hover);
+}
+
+.current td:nth-child(4)>button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: brown;
+}
+
+.current td:nth-child(4):hover>button {
+    outline: brown solid calc(1rem / 16);
+}
+
+td:nth-child(1),
+th:nth-child(1) {
+    min-width: 6rem;
+}
+
+td:nth-child(2),
+th:nth-child(2) {
+    min-width: 6rem;
+}
+
+td:nth-child(3),
+th:nth-child(3) {
+    width: 2rem;
+}
+
+td:nth-child(4),
+th:nth-child(4) {
+    width: 1.5rem;
+}
+
+.available {
+    margin-bottom: 2rem;
+}
+
+tr {
+    border-bottom: .px solid white;
+    /* outline: blue solid calc(1rem / 16); */
+}
+
+tr:last-child {
+    border-bottom: none;
+}
+
+.search {
+    margin-bottom: 1rem;
+}

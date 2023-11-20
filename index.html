@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style></style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Charts in a grid" />
+  <script>
+    document.documentElement.dataset.theme = localStorage.theme === "light" ? "light" : "dark";
+  </script>
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <title>Charts</title>
+  <link href="css/app.css" rel="stylesheet" />
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+</head>
+
+<body>
+  <dialog>
+    <div class="dialog-content">
+      <div class="settings">
+        <div class="dimensions-container">
+          <label for="x">Width</label>
+          <div class="dimensions">
+            <button class="minus">−</button>
+            <input id="x" type="number" min="1" step="1" max="10" />
+            <button class="plus">+</button>
+          </div>
+        </div>
+        <div class="dimensions-container">
+          <label for="y">Height</label>
+          <div class="dimensions">
+            <button class="minus">−</button>
+            <input id="y" type="number" min="1" step="1" max="10" />
+            <button class="plus">+</button>
+          </div>
+        </div>
+        <div class="opacity-container">
+          <label for="opacity-input">Opacity</label>
+          <input type="range" id="opacity-input" min="0.80" max="1.00" step=".05" list="markers" />
+          <span></span>
+          <datalist id="markers">
+          </datalist>
+        </div>
+      </div>
+      <h4>Current</h4>
+      <table class="current">
+        <tr>
+          <th>Exchange</th>
+          <th>Symbol</th>
+          <th>T</th>
+          <th></th>
+        </tr>
+      </table>
+      <button class="clear">Clear</button>
+      <h4>Available</h4>
+      <input id="search" type="search" class="search" placeholder="search" spellcheck="false" />
+      <table class="available">
+        <tr>
+          <th>Exchange</th>
+          <th>Symbol</th>
+        </tr>
+        <tr>
+          <td>loading...</td>
+        </tr>
+      </table>
+    </div>
+  </dialog>
+  <header>
+    <div class="dialog-visibility">
+      <svg viewBox="0 0 20 20"></svg>
+    </div>
+    <button class="theme" aria-label="Theme">
+      <svg viewBox="0 0 24 24"></svg>
+    </button>
+    <a class="github" href="https://github.com/glipitch" target="_blank">
+      <svg viewBox="0 0 28 24">
+      </svg>
+    </a>
+  </header>
+  <main>
+  </main>
+  <script type="module" src="app.mjs"></script>
+</body>
+
+</html>
