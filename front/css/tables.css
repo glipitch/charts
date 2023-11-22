@@ -50,11 +50,11 @@ tr:hover {
     border: none;
     padding: 0;
     cursor: pointer;
-    color: brown;
+    color: rgb(235, 6, 6);
 }
 
 .current td:nth-child(4):hover>button {
-    outline: brown solid calc(1rem / 16);
+    outline: rgb(235, 6, 6) solid calc(1rem / 16);
 }
 
 td:nth-child(1),

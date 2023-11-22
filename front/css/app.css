@@ -31,13 +31,13 @@
 }
 
 :root[data-theme="light"] {
-  --background-color: beige;
+  --background-color: rgb(255, 255, 255);
   --highlight-color: #111111;
   --alternate-row-color: gray;
   --dialog-background: #eeeeee;
-  --dialog-hover: #dddddd;
+  --dialog-hover: #9e9e9e;
   --dialog-label: darkgray;
-  --opacity-color: brown;
+  --opacity-color: #111111;
 }
 
 html,
