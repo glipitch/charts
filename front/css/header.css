@@ -51,7 +51,7 @@ header>* {
 
 .github>svg {
     width: var(--large);
-    fill: rgb(0, 0, 0);
+    fill: brown;
 }
 
 .dialog-visibility {
