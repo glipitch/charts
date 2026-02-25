@@ -5,7 +5,7 @@
             "name": "front",
             "request": "launch",
             "type": "chrome",
-            "url": "http://192.168.0.17:3001/front/index.html"
+            "url": "http://192.168.0.15:3001/front/index.html"
         },
         {
             "type": "node",

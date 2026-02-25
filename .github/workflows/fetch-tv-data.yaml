@@ -2,7 +2,7 @@ on:
   push:
   schedule:
     - cron: "0 1 * * *"
-    
+
       #every 20 mins '*/20 * * * *'
       #every hour '0 * * * *'
       #every 10 mins '*/10 * * * *'
@@ -11,20 +11,21 @@ jobs:
   fetch-tv-data:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/github-script@v6
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
         with:
           script: |
             const script = require('./back/fetch-tv-data.js');
-            script({fetch});
+            await script({fetch});
 
       - name: Push to main
-        uses: actions-js/push@master
-
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: "Update available markets data"
+          file_pattern: front/available-markets/data.json
+
       - name: Push to gh-pages
-        uses: JamesIves/github-pages-deploy-action@v4.4.2
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: front
           branch: gh-pages
