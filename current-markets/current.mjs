@@ -119,17 +119,13 @@ function getChartsFromUrl() {
 function updateUrlFromCharts() {
   try {
     // Serialize to compact readable format: EX:SYM:INT,EX2:SYM2:INT
-    // Use an encoder that percent-escapes unsafe characters but leaves ':' and ',' readable
-    const safeEncode = s => encodeURIComponent(String(s)).replace(/%3A/gi, ':').replace(/%2C/gi, ',');
+    const safeEncode = s => encodeURIComponent(String(s));
     const parts = charts.map(({ exchange, symbol, interval }) =>
       `${safeEncode(exchange)}:${safeEncode(symbol)}:${safeEncode(interval)}`
     );
+    // Build the query string manually to keep ':' and ',' unescaped
     const url = new URL(window.location.href);
-    if (parts.length) {
-      url.searchParams.set('charts', parts.join(','));
-    } else {
-      url.searchParams.delete('charts');
-    }
+    url.search = parts.length ? `?charts=${parts.join(',')}` : '';
     // Replace the current history entry without reloading
     history.replaceState(null, '', url.toString());
   } catch (err) {
