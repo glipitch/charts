@@ -8,7 +8,7 @@ main {
     top: 0;
     margin: 0;
     padding: 0;
-    height: calc(100% - var(--header-height));
+    height: 100%;
 }
 
 main>div {

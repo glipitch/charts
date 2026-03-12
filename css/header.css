@@ -1,7 +1,15 @@
 header {
+    position: fixed;
+    top: 0.4rem;
+    right: 0.4rem;
     display: flex;
-    height: var(--header-height);
-    cursor: pointer;
+    align-items: center;
+    gap: 0.4rem;
+    z-index: 200;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.4rem;
+    background: var(--header-bg);
+    backdrop-filter: blur(12px);
 }
 
 header>* {
@@ -15,13 +23,12 @@ header>* {
 
 
 .dialog-visibility {
-    margin-left: var(--medium);
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
 }
 
 .theme {
     cursor: pointer;
-    margin-left: auto;
-    margin-right: var(--medium);
 }
 
 .theme>svg {
@@ -40,22 +47,14 @@ header>* {
 }
 
 .dialog-visibility>svg {
-    width: 1em;
-    height: 1em;
-    vertical-align: middle;
-    fill: var(--highlight-color);
-    overflow: hidden;
     width: var(--large);
     height: var(--large);
+    fill: var(--highlight-color);
 }
 
 .github>svg {
     width: var(--large);
     fill: brown;
-}
-
-.dialog-visibility {
-    transition: all 0.3s ease-in-out;
 }
 
 :root[data-current="visible"] .dialog-visibility {

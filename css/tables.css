@@ -5,6 +5,7 @@
     max-height: 100%;
     flex-direction: column;
     align-items: center;
+    padding-top: 2.5rem;
 }
 
 table {
@@ -92,4 +93,31 @@ tr:last-child {
 
 .search {
     margin-bottom: 1rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--dialog-label);
+    background: var(--dialog-background);
+    color: var(--highlight-color);
+    outline: none;
+}
+
+.clear {
+    background: none;
+    border: 1px solid var(--dialog-label);
+    color: var(--dialog-label);
+    padding: 0.15rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.current tr[draggable] {
+    cursor: grab;
+}
+
+.current tr.dragging {
+    opacity: 0.3;
+}
+
+.current tr.drag-over {
+    box-shadow: 0 -2px 0 0 brown;
 }

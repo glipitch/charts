@@ -4,6 +4,49 @@ import * as visibility from "./visibility.mjs";
 import * as utilities from "./../utilities.mjs";
 const table = document.querySelector(".current");
 let charts = [];
+let draggedRow = null;
+const enableDragReorder = (row) => {
+  row.draggable = true;
+  row.addEventListener('dragstart', () => {
+    draggedRow = row;
+    row.classList.add('dragging');
+  });
+  row.addEventListener('dragend', () => {
+    row.classList.remove('dragging');
+    draggedRow = null;
+    table.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
+  });
+  row.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (draggedRow && draggedRow !== row) row.classList.add('drag-over');
+  });
+  row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+  row.addEventListener('drop', (e) => {
+    e.preventDefault();
+    row.classList.remove('drag-over');
+    if (!draggedRow || draggedRow === row) return;
+    const rows = [...table.querySelectorAll('tr:not(:first-child)')];
+    if (rows.indexOf(draggedRow) < rows.indexOf(row)) {
+      row.after(draggedRow);
+    } else {
+      row.before(draggedRow);
+    }
+    const reordered = [...table.querySelectorAll('tr:not(:first-child)')].map(r => {
+      const id = r.id.replace('row_', '');
+      return charts.find(c => c.id === id);
+    }).filter(Boolean);
+    charts.length = 0;
+    charts.push(...reordered);
+    const main = document.querySelector('main');
+    reordered.forEach(c => {
+      const el = document.getElementById(`cc_${c.id}`);
+      if (el) main.appendChild(el);
+    });
+    localStorage.setItem('charts', JSON.stringify(charts));
+    updateUrlFromCharts();
+    visibility.setVisibility();
+  });
+};
 const addChartToTable = (item, removeCallback) => {
   const row = utilities.addRow(table, [item.exchange, item.symbol, item.interval]);
   row.id = "row_" + item.id;
@@ -15,6 +58,7 @@ const addChartToTable = (item, removeCallback) => {
     row?.remove();
   }, { once: true });
   row.insertCell().appendChild(button);
+  enableDragReorder(row);
 };
 export const addCurrentMarket = (exchange, symbol) => {
   const item = {

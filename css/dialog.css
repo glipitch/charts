@@ -7,7 +7,7 @@ dialog {
     align-items: center;
     width: 100%;
     border: none;
-    top: var(--header-height);
+    top: 0;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     height: 100%;
