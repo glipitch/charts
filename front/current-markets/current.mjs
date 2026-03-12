@@ -6,7 +6,7 @@ const table = document.querySelector(".current");
 const marketCount = document.querySelector(".market-count");
 const emptyState = document.querySelector(".empty-state");
 const INTERVALS = ["1", "5", "15", "60", "240", "D", "W", "M"];
-const INTERVAL_LABELS = { "1": "1m", "5": "5m", "15": "15m", "60": "1h", "240": "4h", "D": "D", "W": "W", "M": "M" };
+const INTERVAL_LABELS = { "1": "1m", "5": "5m", "15": "15m", "60": "1h", "240": "4h", "D": "1D", "W": "1W", "M": "1M" };
 const displayInterval = (v) => INTERVAL_LABELS[v] || v;
 let charts = [];
 let draggedRow = null;
