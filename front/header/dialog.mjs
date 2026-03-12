@@ -8,14 +8,21 @@ d="M4.707 2.293a1 1 0 00-1.414 1.414l6 6a1 1 0 001.414 0l6-6a1 1 0 00-1.414-1.41
 document.querySelector(".dialog-visibility").addEventListener("click", () => {
   if (dialog.open) {
     document.documentElement.dataset.current = "hidden";
-
     dialog.close();
   } else {
     open();
   }
 });
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && dialog.open) {
+    document.documentElement.dataset.current = "hidden";
+    dialog.close();
+  }
+});
+
 export const open = () => {
   document.documentElement.dataset.current = "visible";
   dialog.show();
-
+  setTimeout(() => document.querySelector(".search")?.focus(), 50);
 }
