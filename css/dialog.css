@@ -9,7 +9,8 @@ dialog {
     border: none;
     top: 0;
     opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+    transform: translateY(-0.5rem);
+    transition: opacity 0.25s ease, transform 0.25s ease;
     height: 100%;
     padding: 0;
     background-color: var(--dialog-background);
@@ -17,16 +18,12 @@ dialog {
     left: 0;
     right: 0;
     z-index: 100;
-    pointer-events: none;
 }
 
 dialog[open] {
     opacity: var(--opacity, 1);
+    transform: translateY(0);
     overflow-y: auto;
     height: 100%;
     pointer-events: auto;
-}
-
-dialog>* {
-    /* margin: 1rem 0; */
 }

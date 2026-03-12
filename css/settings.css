@@ -61,6 +61,11 @@
 .dimensions>button {
     cursor: pointer;
     margin: calc(1rem / 16);
+    transition: transform 0.1s ease;
+}
+
+.dimensions>button:hover {
+    transform: scale(1.2);
 }
 
 .dimensions input {

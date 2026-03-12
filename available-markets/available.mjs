@@ -7,8 +7,11 @@ export const subscribe = (selectionCallback) => {
     if (e.target.tagName !== "TD") {
       return;
     }
-    const exchange = e.target.parentElement.firstChild.textContent;
-    const symbol = e.target.parentElement.firstChild.nextSibling.textContent;
+    const row = e.target.parentElement;
+    const exchange = row.firstChild.textContent;
+    const symbol = row.firstChild.nextSibling.textContent;
+    row.classList.add('just-added');
+    row.addEventListener('animationend', () => row.classList.remove('just-added'), { once: true });
     selectionCallback(exchange, symbol);
   });
 }

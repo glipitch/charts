@@ -54,7 +54,17 @@ header>* {
 
 .github>svg {
     width: var(--large);
-    fill: brown;
+    fill: var(--dialog-label);
+    transition: fill 0.15s ease;
+}
+
+.github:hover>svg {
+    fill: var(--highlight-color);
+}
+
+.dialog-visibility:hover>svg,
+.theme:hover>svg {
+    opacity: 0.7;
 }
 
 :root[data-current="visible"] .dialog-visibility {

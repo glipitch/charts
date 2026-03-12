@@ -33,3 +33,11 @@ export const debounce = (func, delay = 250) => {
 export const includesCaseInsensitive = (haystack, needle) => {
   return haystack.toUpperCase().includes(needle.toUpperCase());
 };
+export const loadSvg = async (selector, path) => {
+  const res = await fetch(path);
+  const text = await res.text();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(text, 'image/svg+xml');
+  const svg = document.querySelector(selector).querySelector('svg');
+  doc.querySelectorAll('path').forEach(p => svg.appendChild(p.cloneNode(true)));
+};

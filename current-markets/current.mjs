@@ -3,6 +3,9 @@ import * as widget from "./widget.mjs";
 import * as visibility from "./visibility.mjs";
 import * as utilities from "./../utilities.mjs";
 const table = document.querySelector(".current");
+const marketCount = document.querySelector(".market-count");
+const emptyState = document.querySelector(".empty-state");
+const INTERVALS = ["1", "5", "15", "60", "D", "W", "M"];
 let charts = [];
 let draggedRow = null;
 const enableDragReorder = (row) => {
@@ -58,7 +61,20 @@ const addChartToTable = (item, removeCallback) => {
     row?.remove();
   }, { once: true });
   row.insertCell().appendChild(button);
+  // Interval cycling — click interval cell to change
+  const intervalCell = row.cells[2];
+  intervalCell.addEventListener('click', () => {
+    const idx = INTERVALS.indexOf(item.interval);
+    item.interval = INTERVALS[(idx + 1) % INTERVALS.length];
+    intervalCell.textContent = item.interval;
+    localStorage.setItem('charts', JSON.stringify(charts));
+    updateUrlFromCharts();
+    widget.remove(item.id);
+    widget.addWidget(item);
+    visibility.setVisibility();
+  });
   enableDragReorder(row);
+  updateMarketCount();
 };
 export const addCurrentMarket = (exchange, symbol) => {
   const item = {
@@ -101,6 +117,7 @@ const removeCurrentMarket = id => {
   widget.remove(id);
   updateUrlFromCharts();
   visibility.setVisibility();
+  updateMarketCount();
 };
 export const reloadWidgets = () => {
   charts.forEach(item => {
@@ -117,8 +134,16 @@ const clearCurrentMarkets = () => {
   charts = [];
   localStorage.setItem("charts", JSON.stringify(charts));
   updateUrlFromCharts();
+  updateMarketCount();
 };
 document.querySelector(".clear").addEventListener("click", () => clearCurrentMarkets());
+
+const updateMarketCount = () => {
+  const n = charts.length;
+  marketCount.textContent = n > 0 ? `(${n})` : '';
+  emptyState.style.display = n > 0 ? 'none' : '';
+};
+updateMarketCount();
 
 // --- URL sync helpers -------------------------------------------------
 function getChartsFromUrl() {
