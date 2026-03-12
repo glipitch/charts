@@ -5,7 +5,9 @@ import * as utilities from "./../utilities.mjs";
 const table = document.querySelector(".current");
 const marketCount = document.querySelector(".market-count");
 const emptyState = document.querySelector(".empty-state");
-const INTERVALS = ["1", "5", "15", "60", "D", "W", "M"];
+const INTERVALS = ["1", "5", "15", "60", "240", "D", "W", "M"];
+const INTERVAL_LABELS = { "1": "1m", "5": "5m", "15": "15m", "60": "1h", "240": "4h", "D": "D", "W": "W", "M": "M" };
+const displayInterval = (v) => INTERVAL_LABELS[v] || v;
 let charts = [];
 let draggedRow = null;
 const enableDragReorder = (row) => {
@@ -51,7 +53,7 @@ const enableDragReorder = (row) => {
   });
 };
 const addChartToTable = (item, removeCallback) => {
-  const row = utilities.addRow(table, [item.exchange, item.symbol, item.interval]);
+  const row = utilities.addRow(table, [item.exchange, item.symbol, displayInterval(item.interval)]);
   row.id = "row_" + item.id;
   const button = document.createElement("button");
   const textNode = document.createTextNode(constants.HEAVY_MULTIPLICATION_X);
@@ -66,7 +68,7 @@ const addChartToTable = (item, removeCallback) => {
   intervalCell.addEventListener('click', () => {
     const idx = INTERVALS.indexOf(item.interval);
     item.interval = INTERVALS[(idx + 1) % INTERVALS.length];
-    intervalCell.textContent = item.interval;
+    intervalCell.textContent = displayInterval(item.interval);
     localStorage.setItem('charts', JSON.stringify(charts));
     updateUrlFromCharts();
     widget.remove(item.id);
