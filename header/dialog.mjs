@@ -4,7 +4,9 @@ document.documentElement.dataset.current = "hidden";
 import { loadSvg } from './../utilities.mjs';
 await loadSvg('.dialog-visibility', 'svg/chevron.svg');
 
-document.querySelector(".dialog-visibility").addEventListener("click", () => {
+const chevron = document.querySelector(".dialog-visibility");
+chevron.title = "Toggle options (Esc)";
+chevron.addEventListener("click", () => {
   if (dialog.open) {
     document.documentElement.dataset.current = "hidden";
     dialog.close();
@@ -14,9 +16,13 @@ document.querySelector(".dialog-visibility").addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && dialog.open) {
-    document.documentElement.dataset.current = "hidden";
-    dialog.close();
+  if (e.key === "Escape") {
+    if (dialog.open) {
+      document.documentElement.dataset.current = "hidden";
+      dialog.close();
+    } else {
+      open();
+    }
   }
 });
 
