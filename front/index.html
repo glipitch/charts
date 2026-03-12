@@ -23,30 +23,36 @@
   <dialog>
     <div class="dialog-content">
       <div class="settings">
-        <div class="dimensions-container">
-          <label for="x">Width</label>
-          <div class="dimensions">
-            <button class="minus">−</button>
-            <input id="x" type="number" min="1" step="1" max="10" />
-            <button class="plus">+</button>
+        <div class="grid-settings">
+          <div class="dimensions-container">
+            <label for="x">Columns</label>
+            <div class="dimensions">
+              <button class="minus">−</button>
+              <input id="x" type="number" min="1" step="1" max="10" />
+              <button class="plus">+</button>
+            </div>
           </div>
-        </div>
-        <div class="dimensions-container">
-          <label for="y">Height</label>
-          <div class="dimensions">
-            <button class="minus">−</button>
-            <input id="y" type="number" min="1" step="1" max="10" />
-            <button class="plus">+</button>
+          <div class="dimensions-container">
+            <label for="y">Rows</label>
+            <div class="dimensions">
+              <button class="minus">−</button>
+              <input id="y" type="number" min="1" step="1" max="10" />
+              <button class="plus">+</button>
+            </div>
           </div>
         </div>
         <div class="opacity-container">
-          <label for="opacity-input">Opacity</label>
-          <input type="range" id="opacity-input" min="0.80" max="1.00" step=".05" list="markers" />
-          <span></span>
+          <div class="opacity-row">
+            <label for="opacity-input">Overlay</label>
+            <input type="range" id="opacity-input" min="0.80" max="1.00" step=".05" list="markers" />
+            <span></span>
+          </div>
+          <div class="opacity-hint">fade this panel to see charts beneath</div>
           <datalist id="markers">
           </datalist>
         </div>
       </div>
+      <div class="divider"></div>
       <div class="current-header">
         <h4>Current</h4>
         <span class="market-count"></span>
@@ -61,6 +67,7 @@
       </table>
       <p class="empty-state">click an available market to add it</p>
       <button class="clear">Clear</button>
+      <div class="divider"></div>
       <h4>Available</h4>
       <input id="search" type="search" class="search" placeholder="search" spellcheck="false" />
       <table class="available">

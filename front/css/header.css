@@ -10,6 +10,7 @@ header {
     border-radius: 0.4rem;
     background: var(--header-bg);
     backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
 }
 
 header>* {

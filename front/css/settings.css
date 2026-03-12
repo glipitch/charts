@@ -1,45 +1,71 @@
 .settings {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    gap: 0.75rem 1.5rem;
-    padding: 0.5rem;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    max-width: 24rem;
 }
 
 .settings * {
     color: var(--highlight-color);
     background-color: var(--dialog-background);
     border: none;
-    font-size: 1rem;
+    font-size: 0.85rem;
+}
+
+.grid-settings {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.opacity-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 0.15rem;
 }
 
 .opacity-container * {
     color: var(--opacity-color);
 }
 
-.opacity-container>input {
-    width: 4rem;
-    accent-color: var(--opacity-color);
-
-}
-
-.opacity-container>span {
-    margin-right: .4rem;
-    cursor: pointer;
-}
-
-.opacity-container>label {
-    cursor: pointer;
-}
-
-.opacity-container,
-.dimensions-container {
+.opacity-row {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: center;
-    gap: .5rem;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.opacity-row>input {
+    flex: 1;
+    max-width: 12rem;
+    accent-color: var(--opacity-color);
+}
+
+.opacity-row>span {
+    cursor: pointer;
+    min-width: 2.2rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.opacity-row>label {
+    cursor: pointer;
+    min-width: 3.2rem;
+}
+
+.opacity-hint {
+    font-size: 0.65rem;
+    color: var(--dialog-label);
+    font-style: italic;
+    letter-spacing: 0.02em;
 }
 
 .dimensions input[type=number]::-webkit-inner-spin-button,
@@ -50,7 +76,7 @@
 .dimensions input {
     -moz-appearance: textfield;
     border: 0;
-    border-bottom: gray solid calc(1rem / 16);
+    border-bottom: var(--border-color) solid 1px;
 }
 
 .dimensions {
@@ -73,5 +99,20 @@
 }
 
 .dimensions input:invalid {
-    outline: brown solid calc(1rem/16);
+    outline: var(--opacity-color) solid 1px;
+}
+
+.dimensions-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.dimensions-container>label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--dialog-label);
 }

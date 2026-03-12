@@ -22,23 +22,27 @@
 :root[data-theme="dark"] {
   --background-color: #151924;
   --highlight-color: #eeeeee;
-  --alternate-row-color: #323232;
+  --alternate-row-color: #252a36;
   --dialog-background: #1e222d;
   --dialog-hover: #2a2e39;
   --dialog-label: #868993;
   --opacity-color: brown;
   --header-bg: rgba(21, 25, 36, 0.85);
+  --border-color: #363b48;
+  --shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 :root[data-theme="light"] {
-  --background-color: #f0f2f5;
-  --highlight-color: #1e293b;
-  --alternate-row-color: #e2e8f0;
-  --dialog-background: #ffffff;
-  --dialog-hover: #f1f5f9;
-  --dialog-label: #64748b;
-  --opacity-color: #b45309;
-  --header-bg: rgba(255, 255, 255, 0.85);
+  --background-color: #f5f5f0;
+  --highlight-color: #2c3342;
+  --alternate-row-color: #edecea;
+  --dialog-background: #fafaf8;
+  --dialog-hover: #efeeeb;
+  --dialog-label: #7c8594;
+  --opacity-color: #c2661a;
+  --header-bg: rgba(250, 250, 248, 0.88);
+  --border-color: #d5d3cf;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
 html,

@@ -16,10 +16,11 @@ table {
     overflow-y: auto;
     overflow-x: auto;
     border-collapse: collapse;
-    border: 1px solid var(--dialog-label);
+    border: 1px solid var(--border-color);
     border-radius: 0.25rem;
     width: fit-content;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+    box-shadow: var(--shadow);
 }
 
 th {
@@ -27,11 +28,12 @@ th {
     top: 0;
     text-align: left;
     background-color: var(--dialog-background);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     color: var(--dialog-label);
-    padding: 0.3rem 0.5rem;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 td {
@@ -142,15 +144,16 @@ h4 {
 }
 
 .search {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     padding: 0.3rem 0.6rem;
-    border: 1px solid var(--dialog-label);
+    border: 1px solid var(--border-color);
     border-radius: 0.2rem;
     background: var(--dialog-background);
     color: var(--highlight-color);
     outline: none;
     font-size: 0.8rem;
     transition: border-color 0.15s ease;
+    box-shadow: var(--shadow);
 }
 
 .search:focus {
@@ -159,12 +162,12 @@ h4 {
 
 .clear {
     background: none;
-    border: 1px solid var(--dialog-label);
+    border: 1px solid var(--border-color);
     border-radius: 0.2rem;
     color: var(--dialog-label);
     padding: 0.2rem 0.7rem;
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     margin-bottom: 0.5rem;
     transition: color 0.15s ease, border-color 0.15s ease;
 }
@@ -184,6 +187,14 @@ h4 {
 
 .current tr.drag-over {
     box-shadow: 0 -2px 0 0 var(--opacity-color);
+}
+
+.divider {
+    width: 60%;
+    max-width: 16rem;
+    height: 1px;
+    background: var(--border-color);
+    margin: 0.3rem 0;
 }
 
 .current tr.drag-over {
