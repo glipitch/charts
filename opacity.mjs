@@ -1,7 +1,7 @@
 import * as utilities from "./utilities.mjs";
-const input = document.querySelector(".opacity-container > input");
-const span = document.querySelector(".opacity-container > span");
-const label = document.querySelector(".opacity-container > label");
+const input = document.querySelector(".opacity-row > input");
+const span = document.querySelector(".opacity-row > span");
+const label = document.querySelector(".opacity-row > label");
 const applyOpacity = (value) => {
     utilities.setProperty("opacity", value);
     span.textContent = parseFloat(value).toFixed(2);
