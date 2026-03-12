@@ -5,7 +5,7 @@ document.querySelector(".dialog-visibility").querySelector("svg").innerHTML = `
 d="M4.707 2.293a1 1 0 00-1.414 1.414l6 6a1 1 0 001.414 0l6-6a1 1 0 00-1.414-1.414L10 7.586 4.707 2.293zm0 8a1 1 0 10-1.414 1.414l6 6a1 1 0 001.414 0l6-6a1 1 0 00-1.414-1.414L10 15.586l-5.293-5.293z" />
 `;
 
-document.querySelector("header").addEventListener("click", async () => {
+document.querySelector(".dialog-visibility").addEventListener("click", () => {
   if (dialog.open) {
     document.documentElement.dataset.current = "hidden";
 

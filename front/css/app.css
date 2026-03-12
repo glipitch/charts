@@ -17,7 +17,6 @@
 :root {
   --large: 1rem;
   --medium: calc(0.5 * var(--large));
-  --header-height: 1.5rem;
 }
 
 :root[data-theme="dark"] {
@@ -28,16 +27,18 @@
   --dialog-hover: #2a2e39;
   --dialog-label: #868993;
   --opacity-color: brown;
+  --header-bg: rgba(21, 25, 36, 0.85);
 }
 
 :root[data-theme="light"] {
-  --background-color: beige;
-  --highlight-color: #111111;
-  --alternate-row-color: gray;
-  --dialog-background: #eeeeee;
-  --dialog-hover: #dddddd;
-  --dialog-label: darkgray;
-  --opacity-color: brown;
+  --background-color: #f0f2f5;
+  --highlight-color: #1e293b;
+  --alternate-row-color: #e2e8f0;
+  --dialog-background: #ffffff;
+  --dialog-hover: #f1f5f9;
+  --dialog-label: #64748b;
+  --opacity-color: #b45309;
+  --header-bg: rgba(255, 255, 255, 0.85);
 }
 
 html,
