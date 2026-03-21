@@ -20,7 +20,12 @@ export const loadAvailable = async () => {
     return;
   }
   const response = await fetch("available-markets/data.json");
-  markets = await response.json();
+  const grouped = await response.json();
+  for (const [exchange, symbols] of Object.entries(grouped)) {
+    for (const symbol of symbols) {
+      markets.push({ exchange, symbol });
+    }
+  }
   applyFilter();
 };
 search.addEventListener("input", () => {

@@ -29,7 +29,12 @@ module.exports = async ({ fetch }) => {
     filtered.sort((a, b) =>
         a.exchange.localeCompare(b.exchange) || a.symbol.localeCompare(b.symbol));
 
-    writeFile('data.json', JSON.stringify(filtered));
+    const grouped = {};
+    for (const { exchange, symbol } of filtered) {
+        if (!grouped[exchange]) grouped[exchange] = [];
+        grouped[exchange].push(symbol);
+    }
+    writeFile('data.json', JSON.stringify(grouped));
     const elapsed = ((Date.now() - t0) / 1000).toFixed(0);
     console.log(`\nDone: ${filtered.length} unique markets in ${elapsed}s`);
 };
