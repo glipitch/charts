@@ -37,12 +37,13 @@ search.addEventListener("input", () => {
 });
 const MAX_ROWS = 200;
 const applyFilter = () => {
-  const query = search.value;
-  const filtered = query
-    ? markets.filter(market =>
-        utilities.includesCaseInsensitive(market.exchange, query) ||
-        utilities.includesCaseInsensitive(market.symbol, query)
-      )
+  const query = search.value.trim();
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const filtered = terms.length
+    ? markets.filter(market => {
+        const combined = (market.exchange + ' ' + market.symbol).toLowerCase();
+        return terms.every(term => combined.includes(term));
+      })
     : [];
   const display = filtered.slice(0, MAX_ROWS);
   available.querySelectorAll("tr:not(:first-child)").forEach(x => x.remove());
