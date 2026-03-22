@@ -138,14 +138,11 @@ async function discoverExchanges(fetch) {
     const seen = new Set();
     for (const type of TYPES) {
         let start = 0;
-        const maxPages = 5;
-        for (let page = 0; page < maxPages; page++) {
+        while (true) {
             try {
                 const data = await fetchPage('', type, '', start, fetch);
                 if (data?.symbols) {
                     data.symbols.forEach(s => {
-                        // prefix is the exchange filter name the API accepts
-                        // source_id is the reliable uppercase fallback
                         seen.add(s.prefix || s.source_id || s.exchange);
                     });
                 }
@@ -157,6 +154,7 @@ async function discoverExchanges(fetch) {
             start += 50;
             await sleep(DELAY);
         }
+        console.log(`  discovered ${seen.size} exchanges through ${type}`);
         await sleep(DELAY);
     }
     return [...seen].sort();
