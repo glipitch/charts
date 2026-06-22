@@ -6,7 +6,6 @@ on:
     paths:
       - .github/workflows/fetch-tv-data.yaml
       - back/fetch-tv-data.js
-      - back/launch-locally.js
   schedule:
     - cron: "0 1 * * *"
   workflow_dispatch:
@@ -26,13 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
       - name: Fetch available markets
-        run: node back/launch-locally.js
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('./back/fetch-tv-data.js');
+            await script({ fetch: globalThis.fetch });
 
       - name: Commit updated data
         id: commit
