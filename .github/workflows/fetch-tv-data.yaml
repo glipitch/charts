@@ -3,34 +3,46 @@ name: Fetch TradingView data
 on:
   push:
     branches: [main]
-    paths: [back/fetch-tv-data.js]
+    paths:
+      - .github/workflows/fetch-tv-data.yaml
+      - back/fetch-tv-data.js
+      - back/launch-locally.js
   schedule:
     - cron: "0 1 * * *"
   workflow_dispatch:
 
-      #every 20 mins '*/20 * * * *'
-      #every hour '0 * * * *'
-      #every 10 mins '*/10 * * * *'
-      #every day at 0100 '0 1 * * *'
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-tv-data
+  cancel-in-progress: false
+
 jobs:
   fetch-tv-data:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/github-script@v7
-        with:
-          script: |
-            const script = require('./back/fetch-tv-data.js');
-            await script({fetch: globalThis.fetch});
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Push to main
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch available markets
+        run: node back/launch-locally.js
+
+      - name: Commit updated data
+        id: commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Update available markets data"
+          commit_message: Update available markets data
           file_pattern: front/available-markets/data.json
 
-      - name: Push to gh-pages
+      - name: Deploy to GitHub Pages
+        if: steps.commit.outputs.changes_detected == 'true'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: front
