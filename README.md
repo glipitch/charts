@@ -6,6 +6,6 @@ View multiple financial charts at once
 
 https://glipitch.github.io/charts
 
-Shareable URLs can include charts and an optional grid at the end:
+Shareable URLs can include charts in the path and an optional short grid query:
 
-`?charts=NASDAQ:AAPL:60,BINANCE:BTCUSDT:240&grid=2x4`
+`https://glipitch.github.io/charts/NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x4`

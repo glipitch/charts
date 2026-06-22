@@ -4,21 +4,26 @@ import * as utilities from "../utilities.mjs";
 
 const safeEncode = value => encodeURIComponent(String(value));
 const DEFAULT_INTERVAL = "60";
+const GITHUB_PAGES_BASE = "/charts";
 
-const getRawParam = name => {
-  const prefix = `${name}=`;
-  return window.location.search
-    .slice(1)
-    .split("&")
-    .find(part => part.startsWith(prefix))
-    ?.slice(prefix.length) || null;
+const getBasePath = () => {
+  const path = window.location.pathname;
+  return path === GITHUB_PAGES_BASE || path.startsWith(`${GITHUB_PAGES_BASE}/`)
+    ? GITHUB_PAGES_BASE
+    : "";
+};
+
+const getPathCharts = () => {
+  const basePath = getBasePath();
+  const path = window.location.pathname.slice(basePath.length).replace(/^\/+/, "");
+  if (!path || path === "index.html" || path === "404.html") return null;
+  return path;
 };
 
 const parseGridSpec = raw => {
   if (!raw) return null;
   const value = raw.trim();
-  const match = value.match(/^(\d+)\s*[xX,:]\s*(\d+)$/)
-    || value.match(/^(\d+)\s*columns?\s+(\d+)\s*rows?$/i);
+  const match = value.match(/^(\d+)x(\d+)$/);
   if (!match) return null;
   const x = Number(match[1]);
   const y = Number(match[2]);
@@ -36,12 +41,6 @@ const normalizeChart = item => ({
   symbol: item.symbol,
   interval: item.interval || DEFAULT_INTERVAL,
 });
-
-const parseJsonCharts = encoded => {
-  const parsed = JSON.parse(decodeURIComponent(encoded));
-  if (!Array.isArray(parsed)) return [];
-  return parsed.map(normalizeChart);
-};
 
 const parseCompactCharts = encoded => encoded
   .split(",")
@@ -66,13 +65,11 @@ const serializeChart = ({ exchange, symbol, interval }) => {
 export const getState = () => {
   try {
     const params = new URLSearchParams(window.location.search);
-    const encoded = getRawParam("charts");
+    const encoded = getPathCharts();
     if (!encoded) return null;
-    const charts = encoded.startsWith("%5B") || encoded.startsWith("[")
-      ? parseJsonCharts(encoded)
-      : parseCompactCharts(encoded);
+    const charts = parseCompactCharts(encoded);
     if (!charts.length) return null;
-    return { charts, grid: parseGridSpec(params.get("grid")) };
+    return { charts, grid: parseGridSpec(params.get("g")) };
   } catch (err) {
     console.warn("Could not parse charts from URL:", err);
     return null;
@@ -84,7 +81,8 @@ export const update = charts => {
     const parts = charts.map(serializeChart);
     const grid = dimensions.getGrid();
     const url = new URL(window.location.href);
-    url.search = parts.length ? `?charts=${parts.join(",")}&grid=${grid.x}x${grid.y}` : "";
+    url.pathname = `${getBasePath()}/${parts.join(",")}`;
+    url.search = parts.length ? `?g=${grid.x}x${grid.y}` : "";
     history.replaceState(null, "", url.toString());
   } catch (err) {
     console.warn("Could not update URL with charts:", err);

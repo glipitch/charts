@@ -101,8 +101,8 @@ test("setGrid can initialize quietly or notify listeners", async () => {
   assert.equal(window.gridChangeCount, 1);
 });
 
-test("URL state parses omitted default interval and explicit grid", async () => {
-  setupBrowser("http://localhost:3000/?charts=Binance:BTCUSDT,NYSE:DOW:240&grid=2x4");
+test("URL state parses path charts and short grid", async () => {
+  setupBrowser("https://glipitch.github.io/charts/Binance:BTCUSDT,NYSE:DOW:240?g=2x4");
   const urlState = await importFresh("../front/current-markets/url-state.mjs");
 
   const state = urlState.getState();
@@ -111,11 +111,13 @@ test("URL state parses omitted default interval and explicit grid", async () => 
   assert.equal(state.charts[0].exchange, "Binance");
   assert.equal(state.charts[0].symbol, "BTCUSDT");
   assert.equal(state.charts[0].interval, "60");
+  assert.equal(state.charts[1].exchange, "NYSE");
+  assert.equal(state.charts[1].symbol, "DOW");
   assert.equal(state.charts[1].interval, "240");
 });
 
 test("URL state keeps encoded separators inside chart fields", async () => {
-  setupBrowser("http://localhost:3000/?charts=Binance:BTC%3AUSDT,NYSE:DOW");
+  setupBrowser("http://localhost:3000/Binance:BTC%3AUSDT,NYSE:DOW");
   const urlState = await importFresh("../front/current-markets/url-state.mjs");
 
   const state = urlState.getState();
@@ -125,7 +127,7 @@ test("URL state keeps encoded separators inside chart fields", async () => {
 });
 
 test("URL state omits :60 when serializing default intervals", async () => {
-  setupBrowser("http://localhost:3000/?charts=old");
+  setupBrowser("https://glipitch.github.io/charts/Binance:OLD");
   const dimensions = await importFresh("../front/dimensions.mjs");
   const urlState = await importFresh("../front/current-markets/url-state.mjs");
 
@@ -137,6 +139,6 @@ test("URL state omits :60 when serializing default intervals", async () => {
 
   assert.equal(
     window.location.href,
-    "http://localhost:3000/?charts=Binance:BTCUSDT,Binance:ETHUSDT:240&grid=2x2",
+    "https://glipitch.github.io/charts/Binance:BTCUSDT,Binance:ETHUSDT:240?g=2x2",
   );
 });

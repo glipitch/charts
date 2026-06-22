@@ -13,7 +13,8 @@ const types = {
 
 createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost');
-    const file = join(dir, url.pathname === '/' ? 'index.html' : url.pathname);
+    const pathname = url.pathname.replace(/^\/charts(?=\/|$)/, '') || '/';
+    const file = join(dir, pathname === '/' || !extname(pathname) ? 'index.html' : pathname);
     readFile(file, (err, data) => {
         if (err) { res.writeHead(404); res.end('Not found'); return; }
         res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream' });
