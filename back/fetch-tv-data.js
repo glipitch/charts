@@ -202,9 +202,3 @@ const HEADERS = {
     Origin: 'https://www.tradingview.com',
     Referer: 'https://www.tradingview.com/'
 };
-
-async function fetchUrl(url, fetch) {
-    const response = await fetch(url, { headers: HEADERS });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-}

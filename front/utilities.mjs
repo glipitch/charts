@@ -30,9 +30,6 @@ export const debounce = (func, delay = 250) => {
     }, delay);
   };
 }
-export const includesCaseInsensitive = (haystack, needle) => {
-  return haystack.toUpperCase().includes(needle.toUpperCase());
-};
 export const loadSvg = async (selector, path) => {
   const res = await fetch(path);
   const text = await res.text();
