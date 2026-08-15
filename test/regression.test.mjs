@@ -142,3 +142,69 @@ test("URL state omits :60 when serializing default intervals", async () => {
     "https://glipitch.github.io/charts/Binance:BTCUSDT,Binance:ETHUSDT:240?g=2x2",
   );
 });
+
+test("TradingView does not keep the initial page load open", async () => {
+  let loadPage;
+  let tradingViewScript;
+  const widgetOptions = [];
+  const main = {
+    appendChild(element) {
+      element.isConnected = true;
+    },
+  };
+
+  globalThis.window = {
+    addEventListener(type, listener) {
+      if (type === "load") loadPage = listener;
+    },
+  };
+  globalThis.document = {
+    readyState: "loading",
+    documentElement: { dataset: { theme: "dark" } },
+    head: {
+      appendChild(element) {
+        tradingViewScript = element;
+      },
+    },
+    querySelector(selector) {
+      return selector === "main" ? main : null;
+    },
+    createElement(tagName) {
+      const listeners = new Map();
+      return {
+        tagName,
+        classList: { add() {} },
+        addEventListener(type, listener) {
+          listeners.set(type, listener);
+        },
+        dispatch(type) {
+          listeners.get(type)?.();
+        },
+      };
+    },
+  };
+
+  const widget = await importFresh("../front/current-markets/widget.mjs");
+  const pendingWidget = widget.addWidget({
+    id: "first-load",
+    exchange: "NASDAQ",
+    symbol: "AAPL",
+    interval: "60",
+  });
+
+  assert.equal(tradingViewScript, undefined);
+  loadPage();
+  await Promise.resolve();
+  assert.equal(tradingViewScript.src, "https://s3.tradingview.com/tv.js");
+
+  window.TradingView = {
+    widget: function (options) {
+      widgetOptions.push(options);
+    },
+  };
+  tradingViewScript.dispatch("load");
+  await pendingWidget;
+
+  assert.equal(widgetOptions.length, 1);
+  assert.equal(widgetOptions[0].symbol, "NASDAQ:AAPL");
+});
