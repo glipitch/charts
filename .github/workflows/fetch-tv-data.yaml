@@ -23,10 +23,10 @@ jobs:
     timeout-minutes: 360
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Fetch available markets
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9.0.0
         with:
           script: |
             const script = require('./back/fetch-tv-data.js');
@@ -34,14 +34,50 @@ jobs:
 
       - name: Commit updated data
         id: commit
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Update available markets data
-          file_pattern: front/available-markets/data.json
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          data_file=front/available-markets/data.json
+          generated_data=$(mktemp)
+          trap 'rm -f "$generated_data"' EXIT
+          cp "$data_file" "$generated_data"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          for attempt in {1..5}; do
+            # The branch may have moved during the fetch. Keep the generated
+            # data and apply it to the latest code before each push attempt.
+            git fetch origin "refs/heads/$TARGET_BRANCH"
+            git reset --hard FETCH_HEAD
+            cp "$generated_data" "$data_file"
+            git add -- "$data_file"
+
+            if git diff --cached --quiet; then
+              echo 'changes_detected=false' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            git commit -m 'Update available markets data'
+            if git push origin "HEAD:refs/heads/$TARGET_BRANCH"; then
+              echo 'changes_detected=true' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 5 ]; then
+              echo "Push attempt $attempt failed; refreshing the branch before retrying."
+              sleep 10
+            fi
+          done
+
+          echo '::error::Could not push updated markets data after 5 attempts.'
+          exit 1
 
       - name: Deploy to GitHub Pages
         if: steps.commit.outputs.changes_detected == 'true'
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
           folder: front
           branch: gh-pages
