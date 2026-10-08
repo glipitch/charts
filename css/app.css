@@ -4,18 +4,18 @@
 @import url(settings.css);
 @import url(tables.css);
 
-:root { --large: 1rem; --opacity: .9; --panel-blur: 12px; }
+:root { --large: 1rem; --opacity: .8; }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --background-color: #151924; --highlight-color: #f0f1f4;
-  --panel-rgb: 30, 34, 45; --dialog-background: #1e222d; --dialog-label: #bfc4d0;
+  --dialog-background: #1e222d; --dialog-label: #bfc4d0;
   --dialog-hover: #2c3241; --border-color: #414858; --accent: #edb66d; --danger: #ff9797;
   --shadow: 0 16px 48px rgb(0 0 0 / .25);
 }
 :root[data-theme="light"] {
   color-scheme: light;
   --background-color: #f5f5f0; --highlight-color: #242b38;
-  --panel-rgb: 250, 250, 248; --dialog-background: #fafaf8; --dialog-label: #465160;
+  --dialog-background: #fafaf8; --dialog-label: #465160;
   --dialog-hover: #e9e9e3; --border-color: #c6c9c4; --accent: #87501d; --danger: #a32626;
   --shadow: 0 16px 48px rgb(35 40 48 / .12);
 }
