@@ -1,181 +1,123 @@
-import * as constants from "../constants.mjs";
 import * as dimensions from "../dimensions.mjs";
 import * as urlState from "./url-state.mjs";
 import * as widget from "./widget.mjs";
-import * as visibility from "./visibility.mjs";
-import * as utilities from "../utilities.mjs";
+import { INTERVALS, normalizeCharts, readSavedState, saveState, getPresentation, isCompactViewport } from "./state.mjs";
 
-const table = document.querySelector(".current");
-const marketCount = document.querySelector(".market-count");
-const emptyState = document.querySelector(".empty-state");
-const main = document.querySelector("main");
+const list = document.querySelector(".current");
+const picker = document.querySelector(".chart-picker");
+const viewPicker = document.querySelector(".mobile-view");
+let state = { charts: [], mobileView: "focus" };
 
-const INTERVALS = ["1", "5", "15", "60", "240", "D", "W", "M"];
-const INTERVAL_LABELS = {
-  "1": "1m",
-  "5": "5m",
-  "15": "15m",
-  "60": "1h",
-  "240": "4h",
-  D: "1D",
-  W: "1W",
-  M: "1M",
+const persist = () => { saveState(state); urlState.update(state.charts); };
+const renderCharts = () => {
+  const presentation = getPresentation(state, dimensions.getGrid());
+  document.documentElement.dataset.view = presentation.view;
+  document.querySelector(".chart-navigation").hidden = !isCompactViewport() || !state.charts.length;
+  viewPicker.querySelector('[value="compare"]').disabled = window.innerWidth < 600;
+  if (isCompactViewport()) viewPicker.value = presentation.view;
+  document.querySelector(".chart-empty").hidden = !!state.charts.length;
+  widget.sync(presentation.charts, presentation.view === "stack");
 };
-
-let charts = [];
-let draggedRow = null;
-
-const displayInterval = value => INTERVAL_LABELS[value] || value;
-const chartById = id => charts.find(chart => chart.id === id);
-
-const saveCharts = () => {
-  localStorage.setItem("charts", JSON.stringify(charts));
-  urlState.update(charts);
-};
-
-const updateMarketCount = () => {
-  const n = charts.length;
-  marketCount.textContent = n > 0 ? `(${n})` : "";
-  emptyState.style.display = n > 0 ? "none" : "";
-};
-
-const reorderChartsFromTable = () => {
-  charts = [...table.querySelectorAll("tr:not(:first-child)")]
-    .map(row => chartById(row.id.replace("row_", "")))
-    .filter(Boolean);
-  charts.forEach(chart => {
-    const el = document.getElementById(`cc_${chart.id}`);
-    if (el) main.appendChild(el);
-  });
-  saveCharts();
-  visibility.setVisibility();
-};
-
-const enableDragReorder = row => {
-  row.draggable = true;
-  row.addEventListener("dragstart", () => {
-    draggedRow = row;
-    row.classList.add("dragging");
-  });
-  row.addEventListener("dragend", () => {
-    row.classList.remove("dragging");
-    draggedRow = null;
-    table.querySelectorAll(".drag-over").forEach(row => row.classList.remove("drag-over"));
-  });
-  row.addEventListener("dragover", event => {
-    event.preventDefault();
-    if (draggedRow && draggedRow !== row) row.classList.add("drag-over");
-  });
-  row.addEventListener("dragleave", () => row.classList.remove("drag-over"));
-  row.addEventListener("drop", event => {
-    event.preventDefault();
-    row.classList.remove("drag-over");
-    if (!draggedRow || draggedRow === row) return;
-    const rows = [...table.querySelectorAll("tr:not(:first-child)")];
-    if (rows.indexOf(draggedRow) < rows.indexOf(row)) {
-      row.after(draggedRow);
-    } else {
-      row.before(draggedRow);
-    }
-    reorderChartsFromTable();
-  });
-};
-
-const refreshWidget = item => {
-  widget.remove(item.id);
-  widget.addWidget(item);
-  visibility.setVisibility();
-};
-
-const removeCurrentMarket = id => {
-  const pos = charts.findIndex(chart => chart.id === id);
-  if (pos < 0) return;
-  charts.splice(pos, 1);
-  widget.remove(id);
-  saveCharts();
-  visibility.setVisibility();
-  updateMarketCount();
-};
-
-const addChartToTable = item => {
-  const row = utilities.addRow(table, [item.exchange, item.symbol, displayInterval(item.interval)]);
-  row.id = "row_" + item.id;
-
+const selectChart = id => { state.activeId = id; picker.value = id; persist(); renderCharts(); };
+const makeButton = (text, label, action) => {
   const button = document.createElement("button");
-  button.appendChild(document.createTextNode(constants.HEAVY_MULTIPLICATION_X));
-  button.addEventListener("click", () => {
-    removeCurrentMarket(item.id);
-    row.remove();
-  }, { once: true });
-  row.insertCell().appendChild(button);
-
-  const intervalCell = row.cells[2];
-  intervalCell.addEventListener("click", () => {
-    const idx = INTERVALS.indexOf(item.interval);
-    item.interval = INTERVALS[(idx + 1) % INTERVALS.length];
-    intervalCell.textContent = displayInterval(item.interval);
-    saveCharts();
-    refreshWidget(item);
-  });
-
-  enableDragReorder(row);
-  updateMarketCount();
+  button.type = "button";
+  button.textContent = text;
+  button.setAttribute("aria-label", label);
+  button.addEventListener("click", action);
+  return button;
 };
 
-const addChart = item => {
-  charts.push(item);
-  widget.addWidget(item);
-  addChartToTable(item);
-  saveCharts();
-  visibility.setVisibility();
+const renderList = () => {
+  list.replaceChildren();
+  picker.replaceChildren();
+  document.querySelector(".market-count").textContent = state.charts.length ? String(state.charts.length) : "";
+  document.querySelector(".empty-state").hidden = !!state.charts.length;
+  document.querySelector(".clear").hidden = !state.charts.length;
+  state.charts.forEach((chart, index) => {
+    picker.add(new Option(`${chart.symbol} · ${chart.exchange}`, chart.id));
+    const row = document.createElement("li");
+    const name = makeButton("", `Show ${chart.symbol} on ${chart.exchange}`, () => selectChart(chart.id));
+    name.className = "chart-name";
+    const symbol = document.createElement("strong");
+    symbol.textContent = chart.symbol;
+    const exchange = document.createElement("small");
+    exchange.textContent = chart.exchange;
+    name.append(symbol, exchange);
+    const interval = document.createElement("select");
+    interval.setAttribute("aria-label", `Interval for ${chart.symbol}`);
+    Object.entries(INTERVALS).forEach(([value, label]) => interval.add(new Option(label, value)));
+    interval.value = chart.interval;
+    interval.addEventListener("change", () => { chart.interval = interval.value; persist(); renderCharts(); });
+    const menu = document.createElement("details");
+    menu.className = "chart-actions";
+    const summary = document.createElement("summary");
+    summary.textContent = "⋯";
+    summary.setAttribute("aria-label", `Actions for ${chart.symbol}`);
+    const actions = document.createElement("div");
+    [-1, 1].forEach(direction => {
+      const button = makeButton(direction < 0 ? "Move up" : "Move down", `${direction < 0 ? "Move up" : "Move down"} ${chart.symbol}`, () => {
+        const position = state.charts.indexOf(chart);
+        const target = position + direction;
+        [state.charts[position], state.charts[target]] = [state.charts[target], state.charts[position]];
+        persist(); renderList(); renderCharts();
+        list.children[target].querySelector("summary").focus();
+      });
+      button.disabled = index + direction < 0 || index + direction >= state.charts.length;
+      actions.append(button);
+    });
+    const remove = makeButton("Remove", `Remove ${chart.symbol}`, () => {
+      state.charts.splice(state.charts.indexOf(chart), 1);
+      if (state.activeId === chart.id) state.activeId = state.charts[Math.min(index, state.charts.length - 1)]?.id;
+      persist(); renderList(); renderCharts();
+      (list.children[Math.min(index, state.charts.length - 1)]?.querySelector(".chart-name") || document.querySelector(".search")).focus();
+    });
+    remove.className = "remove";
+    actions.append(remove);
+    menu.append(summary, actions);
+    row.append(name, interval, menu);
+    list.append(row);
+  });
+  picker.value = state.activeId || "";
+  viewPicker.value = state.mobileView;
 };
 
 export const addCurrentMarket = (exchange, symbol) => {
-  addChart({
-    id: utilities.getNewId(),
-    exchange,
-    symbol,
-    interval: "60",
-  });
+  const [chart] = normalizeCharts([{ exchange, symbol }]);
+  if (!chart) return;
+  state.charts.push(chart);
+  state.activeId = chart.id;
+  persist(); renderList(); renderCharts();
 };
 
 export const loadCurrentMarkets = () => {
-  const state = urlState.getState();
-  if (state) {
-    charts = state.charts;
-    const grid = state.grid || dimensions.getReasonableGrid(charts.length);
+  state = readSavedState();
+  const shared = urlState.getState();
+  if (shared) {
+    const sameCharts = shared.charts.length === state.charts.length && shared.charts.every((chart, index) =>
+      ["exchange", "symbol", "interval"].every(key => chart[key] === state.charts[index][key]));
+    if (sameCharts) shared.charts = state.charts;
+    state.charts = shared.charts;
+    if (!sameCharts) state.activeId = state.charts[0]?.id;
+    const grid = shared.grid || dimensions.getReasonableGrid(state.charts.length);
     dimensions.setGrid(grid.x, grid.y, false);
-    localStorage.setItem("charts", JSON.stringify(charts));
-  } else {
-    charts = JSON.parse(localStorage.getItem("charts")) || [];
   }
-
-  urlState.update(charts);
-  charts.forEach(item => {
-    widget.addWidget(item);
-    addChartToTable(item);
-  });
-  visibility.setVisibility();
+  persist(); renderList(); renderCharts();
 };
+export const reloadWidgets = () => { widget.reset(); renderCharts(); };
 
-export const reloadWidgets = () => {
-  charts.forEach(refreshWidget);
-  visibility.setVisibility();
-};
-
-const clearCurrentMarkets = () => {
-  charts.forEach(item => {
-    document.getElementById("row_" + item.id)?.remove();
-    widget.remove(item.id);
-  });
-  charts = [];
-  saveCharts();
-  updateMarketCount();
-};
-
-document.querySelector(".clear").addEventListener("click", () => clearCurrentMarkets());
-window.addEventListener("gridchange", () => {
-  visibility.setVisibility();
-  urlState.update(charts);
+picker.addEventListener("change", () => selectChart(picker.value));
+viewPicker.addEventListener("change", () => { state.mobileView = viewPicker.value; persist(); renderCharts(); });
+document.querySelectorAll("[data-step]").forEach(button => button.addEventListener("click", () => {
+  const index = state.charts.findIndex(chart => chart.id === state.activeId);
+  const next = (index + Number(button.dataset.step) + state.charts.length) % state.charts.length;
+  if (state.charts[next]) selectChart(state.charts[next].id);
+}));
+document.querySelector(".clear").addEventListener("click", () => {
+  state.charts = [];
+  state.activeId = undefined;
+  persist(); renderList(); renderCharts();
+  document.querySelector(".search").focus();
 });
-updateMarketCount();
+window.addEventListener("gridchange", () => { persist(); renderCharts(); });
+window.addEventListener("resize", renderCharts);

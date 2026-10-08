@@ -5,21 +5,7 @@ export const getNewId = (len = 32) => {
       b => ("0" + (b & 0xff).toString(16))
         .slice(-2)).join("");
 }
-const addCell = (row, text) => row.insertCell().appendChild(document.createTextNode(text));
-export const addRow = (table, texts) => {
-  const row = table.insertRow();
-  texts.forEach(text => addCell(row, text));
-  return row;
-}
 export const setProperty = (key, value) => document.documentElement.style.setProperty(`--${key}`, value);
-export const getProperty = (key) => document.documentElement.style.getPropertyValue(`--${key}`);
-export const createRangeDecimalSafe
-  = (first, step, length, multiplier) =>
-    Array.from({ length: length },
-      (_, index) =>
-        (first * multiplier + index * step * multiplier)
-        / multiplier);
-export const createValueOptions = (ar) => ar.map(item => `<option value="${item}" />`).join("");
 
 export const debounce = (func, delay = 250) => {
   let timerId;
@@ -35,6 +21,6 @@ export const loadSvg = async (selector, path) => {
   const text = await res.text();
   const parser = new DOMParser();
   const doc = parser.parseFromString(text, 'image/svg+xml');
-  const svg = document.querySelector(selector).querySelector('svg');
+  const svg = (typeof selector === "string" ? document.querySelector(selector) : selector).querySelector('svg');
   doc.querySelectorAll('path').forEach(p => svg.appendChild(p.cloneNode(true)));
 };
