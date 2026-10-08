@@ -1,56 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+  <style></style>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="View multiple financial charts at once" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Charts in a grid" />
   <link rel="canonical" href="https://glipitch.github.io/charts/" />
-  <script>document.documentElement.dataset.theme = localStorage.theme === "light" ? "light" : "dark";</script>
-  <link rel="shortcut icon" href="favicon.ico" />
+  <script>
+    document.documentElement.dataset.theme = localStorage.theme === "light" ? "light" : "dark";
+  </script>
+  <!-- <link rel="icon" type="image/svg+xml" href="icon.svg" /> -->
+
+
+  <link rel="shortcut icon" href="favicon.ico">
+
   <title>Charts</title>
   <link href="css/app.css" rel="stylesheet" />
 </head>
+
 <body>
-  <header>
-    <span class="brand">Charts</span>
-    <button class="dialog-visibility" aria-controls="markets" aria-expanded="false">Markets</button>
-    <button class="theme" aria-label="Switch theme"><svg viewBox="0 0 24 24" aria-hidden="true"></svg></button>
-    <a class="github" href="https://github.com/glipitch/charts" aria-label="Charts on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"></svg></a>
-  </header>
-  <nav class="chart-navigation" aria-label="Charts" hidden>
-    <button data-step="-1" aria-label="Previous chart">‹</button>
-    <select class="chart-picker" aria-label="Active chart"></select>
-    <button data-step="1" aria-label="Next chart">›</button>
-    <select class="mobile-view" aria-label="Chart layout">
-      <option value="focus">Single</option><option value="stack">Stack</option><option value="compare">Compare</option>
-    </select>
-  </nav>
-  <main>
-    <div class="chart-empty"><p>Your charts, together.</p><button class="open-markets">Add a chart</button></div>
-  </main>
-  <dialog id="markets" aria-labelledby="markets-title">
-    <div class="panel-header">
-      <h1 id="markets-title">Markets</h1>
-      <button class="theme" aria-label="Switch theme"><svg viewBox="0 0 24 24" aria-hidden="true"></svg></button>
-      <button class="close-panel" aria-label="Close markets">✕</button>
-    </div>
-    <div class="search-bar"><label class="sr-only" for="search">Search markets</label><input id="search" type="search" class="search" placeholder="Symbol or exchange" spellcheck="false" autocomplete="off" /></div>
-    <div class="panel-content">
-      <p class="search-status" role="status">Search symbols or exchanges</p>
-      <ul class="available" aria-label="Available markets"></ul>
-      <div class="section-header"><h2>Current <span class="market-count"></span></h2><button class="clear">Clear</button></div>
-      <ul class="current" aria-label="Current charts"></ul>
-      <p class="empty-state">Add a market to get started.</p>
-      <details class="settings">
-        <summary>Layout & appearance</summary>
+  <dialog id="settings" aria-label="Settings">
+    <div class="dialog-content">
+      <div class="settings">
         <div class="grid-settings">
-          <div class="dimensions-container"><label for="x">Columns</label><div class="dimensions"><button class="minus" aria-label="Fewer columns">−</button><input id="x" type="number" min="1" step="1" max="20" /><button class="plus" aria-label="More columns">+</button></div></div>
-          <div class="dimensions-container"><label for="y">Rows</label><div class="dimensions"><button class="minus" aria-label="Fewer rows">−</button><input id="y" type="number" min="1" step="1" max="20" /><button class="plus" aria-label="More rows">+</button></div></div>
+          <div class="dimensions-container">
+            <label for="x">Columns</label>
+            <div class="dimensions">
+              <button class="minus">−</button>
+              <input id="x" type="number" min="1" step="1" max="10" />
+              <button class="plus">+</button>
+            </div>
+          </div>
+          <div class="dimensions-container">
+            <label for="y">Rows</label>
+            <div class="dimensions">
+              <button class="minus">−</button>
+              <input id="y" type="number" min="1" step="1" max="10" />
+              <button class="plus">+</button>
+            </div>
+          </div>
         </div>
-        <div class="opacity-row"><label for="opacity-input">Panel opacity</label><output for="opacity-input"></output><input type="range" id="opacity-input" min="0.80" max="1" step="0.05" /></div>
-      </details>
+        <div class="opacity-container">
+          <div class="opacity-row">
+            <label for="opacity-input">Opacity</label>
+            <input type="range" id="opacity-input" min="0.80" max="1.00" step=".05" list="markers" />
+            <span></span>
+          </div>
+          <div class="opacity-hint">fade this panel to see charts beneath</div>
+          <datalist id="markers">
+          </datalist>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="current-header">
+        <h4>Current</h4>
+        <span class="market-count"></span>
+      </div>
+      <table class="current">
+        <tr>
+          <th>Exchange</th>
+          <th>Symbol</th>
+          <th>Interval</th>
+          <th></th>
+        </tr>
+      </table>
+      <p class="empty-state">click an available market to add it</p>
+      <button class="clear">Clear</button>
+      <div class="divider"></div>
+      <h4>Available</h4>
+      <input id="search" type="search" class="search" placeholder="e.g. btc binance" spellcheck="false" />
+      <table class="available">
+        <tr>
+          <th>Exchange</th>
+          <th>Symbol</th>
+        </tr>
+        <tr>
+          <td>loading...</td>
+        </tr>
+      </table>
     </div>
   </dialog>
+  <header>
+    <button class="dialog-visibility" aria-label="Toggle settings" aria-controls="settings" aria-expanded="false">
+      <svg viewBox="0 0 20 20"></svg>
+    </button>
+    <button class="theme" aria-label="Theme">
+      <svg viewBox="0 0 24 24"></svg>
+    </button>
+    <a class="github" href="https://github.com/glipitch/charts">
+      <svg viewBox="0 0 24 24">
+      </svg>
+    </a>
+  </header>
+  <main>
+  </main>
   <script type="module" src="app.mjs"></script>
 </body>
+
 </html>

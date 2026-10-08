@@ -1,7 +1,20 @@
-main { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--x, 2), minmax(0, 1fr)); grid-template-rows: repeat(var(--y, 2), minmax(0, 1fr)); overflow: hidden; }
-.chart { min-width: 0; min-height: 0; }
-.chart-empty { grid-column: 1 / -1; grid-row: 1 / -1; place-self: center; text-align: center; color: var(--dialog-label); }
-.chart-empty button { background: var(--dialog-hover); color: var(--highlight-color); }
-[data-view="focus"] main { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
-[data-view="compare"] main { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr); }
-[data-view="stack"] main { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-rows: max(360px, 65dvh); overflow-y: auto; padding-bottom: env(safe-area-inset-bottom); }
+main {
+    display: grid;
+    grid-template-columns: repeat(var(--x), 1fr);
+    grid-template-rows: repeat(var(--y), 1fr);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+main>div {
+    z-index: 0;
+}
+
+.hidden {
+    display: none;
+}

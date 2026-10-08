@@ -15,35 +15,11 @@ export const normalizeCharts = items => {
     return [{ id, exchange, symbol, interval: Object.hasOwn(INTERVALS, item.interval) ? String(item.interval) : "60" }];
   });
 };
-
 export const readSavedState = () => {
   try {
     const saved = JSON.parse(localStorage.getItem("charts"));
-    const charts = normalizeCharts(Array.isArray(saved) ? saved : saved?.charts);
-    return {
-      charts,
-      activeId: charts.some(chart => chart.id === saved?.activeId) ? saved.activeId : charts[0]?.id,
-      mobileView: ["focus", "stack", "compare"].includes(saved?.mobileView) ? saved.mobileView : "focus",
-    };
+    return { charts: normalizeCharts(Array.isArray(saved) ? saved : saved?.charts) };
   } catch {
-    return { charts: [], activeId: undefined, mobileView: "focus" };
+    return { charts: [] };
   }
-};
-
-export const saveState = state => localStorage.setItem("charts", JSON.stringify({ version: 2, ...state }));
-export const isCompactViewport = () => window.innerWidth < 768 || (window.innerWidth <= 1000 && window.innerHeight <= 500);
-
-export const getPresentation = (state, grid) => {
-  if (!isCompactViewport()) {
-    const charts = state.charts.slice(0, grid.x * grid.y);
-    const active = state.charts.find(chart => chart.id === state.activeId);
-    if (active && !charts.includes(active)) charts[charts.length - 1] = active;
-    return { view: "grid", charts };
-  }
-  const view = state.mobileView === "compare" && window.innerWidth < 600 ? "focus" : state.mobileView;
-  if (view === "stack") return { view, charts: state.charts };
-  const index = Math.max(0, state.charts.findIndex(chart => chart.id === state.activeId));
-  const charts = state.charts.slice(index, index + (view === "compare" ? 2 : 1));
-  if (view === "compare" && charts.length === 1 && state.charts.length > 1) charts.push(state.charts[0]);
-  return { view, charts };
 };

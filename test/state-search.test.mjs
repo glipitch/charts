@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { webcrypto } from 'node:crypto';
-import { normalizeCharts, readSavedState, getPresentation } from '../front/current-markets/state.mjs';
+import { normalizeCharts, readSavedState } from '../front/current-markets/state.mjs';
 import { prepare, findMarkets } from '../front/available-markets/search.mjs';
 import { readFileSync } from 'node:fs';
 
@@ -18,7 +18,6 @@ test('old saved charts migrate without markup and invalid records are discarded'
   assert.equal(state.charts[0].id, 'old');
   assert.notEqual(state.charts[1].id, 'old');
   assert.equal(state.charts[1].interval, '60');
-  assert.equal(state.mobileView, 'focus');
 });
 
 test('corrupt storage and malformed chart fields do not prevent startup', () => {
@@ -27,18 +26,10 @@ test('corrupt storage and malformed chart fields do not prevent startup', () => 
   assert.deepEqual(normalizeCharts([{ exchange: 'TEST', symbol: 123 }]), []);
 });
 
-test('mobile presentation selects charts without changing the shared desktop grid', () => {
-  const charts = ['a', 'b', 'c', 'd'].map(id => ({ id }));
-  const state = { charts, activeId: 'd', mobileView: 'compare' };
-  const grid = { x: 2, y: 2 };
-  globalThis.window = { innerWidth: 390, innerHeight: 844 };
-  assert.deepEqual(getPresentation(state, grid), { view: 'focus', charts: [charts[3]] });
-  window.innerWidth = 844; window.innerHeight = 390;
-  assert.deepEqual(getPresentation(state, grid), { view: 'compare', charts: [charts[3], charts[0]] });
-  window.innerWidth = 1280; window.innerHeight = 720;
-  assert.deepEqual(getPresentation(state, grid), { view: 'grid', charts });
-  assert.deepEqual(getPresentation(state, { x: 1, y: 1 }), { view: 'grid', charts: [charts[3]] });
-  assert.deepEqual(grid, { x: 2, y: 2 });
+test('charts saved by the redesigned interface survive restoration of the original settings', () => {
+  const charts = [{ id: 'saved', exchange: 'NASDAQ', symbol: 'AAPL', interval: '240' }];
+  globalThis.localStorage = { getItem: () => JSON.stringify({ version: 2, charts, activeId: 'saved', mobileView: 'focus' }) };
+  assert.deepEqual(readSavedState().charts, charts);
 });
 
 test('search ranks exact symbols first and combines symbol and exchange terms', () => {

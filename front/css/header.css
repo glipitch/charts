@@ -1,11 +1,73 @@
-header { display: flex; align-items: center; gap: 4px; padding: env(safe-area-inset-top) max(8px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left)); min-height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--border-color); background: var(--background-color); }
-.brand { margin-right: auto; font-weight: 600; }
-.dialog-visibility[aria-expanded="true"] { background: var(--dialog-hover); }
-.theme, .github { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 12px; border-radius: 8px; }
-.theme svg, .github svg { width: 20px; height: 20px; fill: var(--highlight-color); }
-[data-theme="light"] .theme path:first-child, [data-theme="dark"] .theme path:nth-last-child(-n + 2) { visibility: hidden; }
-.chart-navigation { display: flex; align-items: center; gap: 4px; padding: 4px max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left)); flex-shrink: 0; }
-.chart-navigation button { width: 44px; flex-shrink: 0; }
-.chart-picker { flex: 1; width: 0; }
-.mobile-view { width: 92px; }
-@media (max-width: 350px) { .chart-navigation { gap: 0; } .mobile-view { width: 84px; } }
+header {
+    position: fixed;
+    top: 0.4rem;
+    right: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    z-index: 200;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.4rem;
+    background: var(--header-bg);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
+}
+
+header>* {
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+
+
+.dialog-visibility {
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.theme {
+    cursor: pointer;
+}
+
+.theme>svg {
+    width: var(--large);
+    fill: var(--highlight-color);
+    fill-rule: evenodd;
+    clip-rule: evenodd;
+}
+
+[data-theme="light"] .theme path:first-child {
+    visibility: hidden;
+}
+
+[data-theme="dark"] .theme path:nth-last-child(-n + 2) {
+    visibility: hidden;
+}
+
+.dialog-visibility>svg {
+    width: var(--large);
+    height: var(--large);
+    fill: var(--highlight-color);
+}
+
+.github>svg {
+    width: var(--large);
+    fill: var(--dialog-label);
+    transition: fill 0.15s ease;
+}
+
+.github:hover>svg {
+    fill: var(--highlight-color);
+}
+
+.dialog-visibility:hover>svg,
+.theme:hover>svg {
+    opacity: 0.7;
+}
+
+:root[data-current="visible"] .dialog-visibility {
+    transform: rotate(-180deg);
+}

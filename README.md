@@ -12,8 +12,8 @@ Shareable URLs can include charts in the path and an optional short grid query:
 
 `https://glipitch.github.io/charts/NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x4`
 
-Phones default to a single chart, with a switcher and optional stacked or landscape comparison views. These preferences do not change the shared desktop grid. Open Markets with the button or Ctrl/Cmd+K; Escape closes it.
+Open settings with the rotating chevron or Escape. Set columns, rows and opacity at the top; click available markets to add charts, click an interval to cycle it, and drag Current rows to reorder charts.
 
 Run `node back/serve.js` locally and `node --test` for checks. Edit `front/index.html`, then run `node back/build.js` to generate the matching GitHub Pages fallback. Deployment also builds and tests the shell, runs on frontend changes, and follows successful catalogue refreshes.
 
-Market search loads on demand in a worker. Catalogue refreshes preserve the previous file on request failures, capped results, or a drop greater than 25% in market count.
+Market search runs in a worker. Catalogue refreshes preserve the previous file on request failures, capped results, or a drop greater than 25% in market count.

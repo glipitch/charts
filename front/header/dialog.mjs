@@ -1,26 +1,37 @@
-import { loadAvailable } from "../available-markets/available.mjs";
+import { loadSvg } from "../utilities.mjs";
+
 const dialog = document.querySelector("dialog");
-const toggle = document.querySelector(".dialog-visibility");
-let previousFocus;
-const update = () => toggle.setAttribute("aria-expanded", String(dialog.open));
-const close = () => dialog.close();
-export const open = () => {
-  if (dialog.open) return;
-  previousFocus = document.activeElement;
-  dialog.show();
-  update();
-  loadAvailable();
-  document.querySelector(".search").focus({ preventScroll: true });
+const chevron = document.querySelector(".dialog-visibility");
+
+const setCurrentVisibility = value => {
+  document.documentElement.dataset.current = value;
+  chevron.setAttribute("aria-expanded", String(value === "visible"));
 };
-toggle.addEventListener("click", () => dialog.open ? close() : open());
-document.querySelector(".close-panel").addEventListener("click", close);
-document.querySelector(".open-markets").addEventListener("click", open);
-dialog.addEventListener("close", () => { update(); if (!dialog.open) (previousFocus?.isConnected ? previousFocus : toggle).focus(); });
+
+const close = () => {
+  setCurrentVisibility("hidden");
+  dialog.close();
+};
+
+const toggle = () => {
+  if (dialog.open) {
+    close();
+  } else {
+    open();
+  }
+};
+
+export const open = () => {
+  setCurrentVisibility("visible");
+  dialog.show();
+  setTimeout(() => document.querySelector(".search")?.focus(), 50);
+};
+
+setCurrentVisibility("hidden");
+chevron.title = "Toggle options (Esc)";
+chevron.addEventListener("click", toggle);
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape" && dialog.open) { event.preventDefault(); close(); }
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") { event.preventDefault(); open(); }
+  if (event.key === "Escape") toggle();
 });
-const sizePanel = () => document.documentElement.style.setProperty("--viewport-height", `${window.visualViewport?.height || window.innerHeight}px`);
-window.visualViewport?.addEventListener("resize", sizePanel);
-window.addEventListener("resize", sizePanel);
-sizePanel();
+
+loadSvg(".dialog-visibility", "svg/chevron.svg");
