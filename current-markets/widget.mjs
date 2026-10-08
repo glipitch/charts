@@ -44,6 +44,8 @@ const start = async entry => {
       timezone: "Etc/UTC",
       theme: document.documentElement.dataset.theme,
       style: "1", locale: "en", enable_publishing: false, save_image: false,
+      // In a scrolling stack, let vertical touch gestures reach the page.
+      disabled_features: entry.scrollPage ? ["vert_touch_drag_scroll"] : [],
       container_id: entry.container.id,
     });
   } catch {
@@ -62,7 +64,7 @@ export const addWidget = (chart, lazy = false) => {
   container.id = `cc_${chart.id}`;
   container.setAttribute("aria-label", `${chart.symbol} chart`);
   main.appendChild(container);
-  const entry = { chart: { ...chart }, container, started: false };
+  const entry = { chart: { ...chart }, container, started: false, scrollPage: lazy };
   entries.set(chart.id, entry);
   if (lazy && observer) observer.observe(container);
   else return start(entry);
@@ -81,6 +83,10 @@ export const sync = (charts, lazy = false) => {
   charts.forEach(chart => {
     let entry = entries.get(chart.id);
     if (entry && entry.chart.interval !== chart.interval) { remove(chart.id); entry = undefined; }
+    if (entry && entry.scrollPage !== lazy) {
+      if (entry.started) { remove(chart.id); entry = undefined; }
+      else entry.scrollPage = lazy;
+    }
     if (!entry) addWidget(chart, lazy);
     else if (!lazy && !entry.started) {
       observer?.unobserve(entry.container);

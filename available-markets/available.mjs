@@ -1,4 +1,4 @@
-import { addRow, debounce } from "../utilities.mjs?v=e5e8dd98c0fa";
+import { addRow, debounce } from "../utilities.mjs?v=2df584b8f1cb";
 
 const available = document.querySelector(".available");
 const body = available.tBodies[0];
@@ -41,7 +41,7 @@ export const loadAvailable = () => {
   clearResults();
   showMessage("loading...");
   try {
-    worker = new Worker(new URL("search-worker.mjs?v=e5e8dd98c0fa", import.meta.url), { type: "module" });
+    worker = new Worker(new URL("search-worker.mjs?v=2df584b8f1cb", import.meta.url), { type: "module" });
     const currentWorker = worker;
     worker.addEventListener("error", () => { if (worker === currentWorker) showError(); });
     worker.addEventListener("message", ({ data }) => {

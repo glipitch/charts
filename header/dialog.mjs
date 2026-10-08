@@ -1,4 +1,4 @@
-import { loadSvg } from "../utilities.mjs?v=e5e8dd98c0fa";
+import { loadSvg } from "../utilities.mjs?v=2df584b8f1cb";
 
 const dialog = document.querySelector("dialog");
 const chevron = document.querySelector(".dialog-visibility");
@@ -47,4 +47,4 @@ window.visualViewport?.addEventListener("resize", sizeWindow);
 window.addEventListener("resize", sizeWindow);
 sizeWindow();
 
-loadSvg(".dialog-visibility", "svg/chevron.svg?v=e5e8dd98c0fa");
+loadSvg(".dialog-visibility", "svg/chevron.svg?v=2df584b8f1cb");
