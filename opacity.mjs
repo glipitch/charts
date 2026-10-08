@@ -1,12 +1,31 @@
-import { setProperty } from "./utilities.mjs";
-const input = document.querySelector("#opacity-input");
-const output = document.querySelector(".opacity-row output");
-const apply = value => {
-  const parsed = Number(value);
-  const opacity = Number.isFinite(parsed) && parsed >= 0.8 && parsed <= 1 ? parsed : 0.8;
-  input.value = opacity;
-  output.value = `${Math.round(opacity * 100)}%`;
-  setProperty("opacity", opacity);
+import * as utilities from "./utilities.mjs";
+const input = document.querySelector(".opacity-row > input");
+const span = document.querySelector(".opacity-row > span");
+const label = document.querySelector(".opacity-row > label");
+const applyOpacity = (value) => {
+    utilities.setProperty("opacity", value);
+    span.textContent = parseFloat(value).toFixed(2);
 };
-apply(localStorage.getItem("opacity") ?? 0.8);
-input.addEventListener("input", () => { apply(input.value); localStorage.setItem("opacity", input.value); });
+const savedOpacity = Number(localStorage.getItem("opacity"));
+const initialOpacity = savedOpacity >= .8 && savedOpacity <= 1 ? savedOpacity : .8;
+input.value = initialOpacity;
+applyOpacity(initialOpacity);
+input.addEventListener("input", (event) => {
+    const etv = event.target.value;
+    applyOpacity(etv);
+    localStorage.setItem("opacity", etv);
+});
+//create markers
+document.getElementById("markers").innerHTML = utilities
+    .createValueOptions(utilities.createRangeDecimalSafe(.7, .05, 7, 100));
+
+label.addEventListener("click", () => {
+    input.value = input.min;
+    applyOpacity(input.min);
+    localStorage.setItem("opacity", input.min);
+});
+span.addEventListener("click", () => {
+    input.value = input.max;
+    applyOpacity(input.max);
+    localStorage.setItem("opacity", input.max);
+});
