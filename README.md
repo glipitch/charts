@@ -14,6 +14,8 @@ Shareable URLs can include charts in the path and an optional short grid query:
 
 Open settings with the rotating chevron or Escape. Set columns, rows and opacity at the top; click available markets to add charts, click an interval to cycle it, and drag Current rows to reorder charts.
 
-Run `node back/serve.js` locally and `node --test` for checks. Edit `front/index.html`, then run `node back/build.js` to generate the matching GitHub Pages fallback. Deployment also builds and tests the shell, runs on frontend changes, and follows successful catalogue refreshes.
+On phones, the same selected charts form a scrolling column without changing the saved desktop grid. Settings retain their original order, with larger touch targets and one scrolling page. Keyboard users can reorder a focused Current row with Alt + Up/Down.
+
+Run `node back/serve.js` locally and `node --test` for checks. Edit `front/index.html`, then run `node back/build.js` to generate the matching GitHub Pages fallback and a versioned release in `dist`. Deployment builds and tests the release, runs on frontend changes, and follows successful catalogue refreshes. Versioned asset URLs keep older cached scripts from mixing with a new page.
 
 Market search runs in a worker. Catalogue refreshes preserve the previous file on request failures, capped results, or a drop greater than 25% in market count.

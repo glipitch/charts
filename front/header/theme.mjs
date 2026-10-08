@@ -3,7 +3,7 @@ import { loadSvg } from "../utilities.mjs";
 
 const theme = document.querySelector(".theme");
 
-await loadSvg(".theme", "svg/theme.svg");
+loadSvg(".theme", "svg/theme.svg");
 theme.addEventListener("click", event => {
   const currentTheme = document.documentElement.dataset.theme;
   const nextTheme = currentTheme === "light" ? "dark" : "light";

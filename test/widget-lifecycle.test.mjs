@@ -70,3 +70,29 @@ test('stacked charts wait until near the viewport before loading', async () => {
   await Promise.resolve();
   assert.equal(calls.length, 1);
 });
+
+test('returning to the desktop grid starts charts that were waiting below the phone viewport', async () => {
+  const { calls } = browser({ lazy: true });
+  const widget = await import(`../front/current-markets/widget.mjs?lifecycle=${importId++}`);
+  widget.sync(charts, true);
+  await Promise.resolve();
+  assert.equal(calls.length, 0);
+  widget.sync(charts);
+  await Promise.resolve();
+  assert.equal(calls.length, 3);
+});
+
+test('a stale intersection after a theme reset cannot start its replacement chart', async () => {
+  const { main, calls, intersect } = browser({ lazy: true });
+  const widget = await import(`../front/current-markets/widget.mjs?lifecycle=${importId++}`);
+  widget.sync([charts[0]], true);
+  const previous = main.children[1];
+  widget.reset();
+  widget.sync([charts[0]], true);
+  intersect(previous);
+  await Promise.resolve();
+  assert.equal(calls.length, 0);
+  intersect(main.children[1]);
+  await Promise.resolve();
+  assert.equal(calls.length, 1);
+});

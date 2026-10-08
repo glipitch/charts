@@ -66,7 +66,7 @@ const manageDimension = key => {
   const value = getValidDimension(localStorage.getItem(key));
   input.value = value;
   utilities.setProperty(key, value);
-  input.addEventListener("input", () => setDimension(key, input.value));
+  input.addEventListener("change", () => setDimension(key, input.value));
   input.parentElement.querySelector(".plus").addEventListener("click", () => {
     const value = Number(input.value);
     if (value < constants.MAX_DIMENSION) {

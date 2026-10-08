@@ -11,8 +11,10 @@ dialog {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-0.5rem);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    height: 100%;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s 0.25s;
+    height: var(--viewport-height, 100dvh);
+    max-height: none;
+    max-width: none;
     padding: 0;
     background-color: var(--dialog-background);
     color: var(--highlight-color);
@@ -23,9 +25,9 @@ dialog {
 
 dialog[open] {
     visibility: visible;
+    transition-delay: 0s;
     opacity: var(--opacity, 1);
     transform: translateY(0);
-    overflow-y: auto;
-    height: 100%;
+    overflow: hidden;
     pointer-events: auto;
 }

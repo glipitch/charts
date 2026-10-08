@@ -2,29 +2,20 @@ import * as constants from "../constants.mjs";
 import * as dimensions from "../dimensions.mjs";
 import * as urlState from "./url-state.mjs";
 import * as widget from "./widget.mjs";
-import { normalizeCharts, readSavedState } from "./state.mjs";
+import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState } from "./state.mjs";
 import * as utilities from "../utilities.mjs";
 
 const table = document.querySelector(".current");
+const body = table.tBodies[0];
 const marketCount = document.querySelector(".market-count");
 const emptyState = document.querySelector(".empty-state");
 const syncCharts = () => {
   const { x, y } = dimensions.getGrid();
-  widget.sync(charts.slice(0, x * y));
+  const compact = window.innerWidth <= 600 || (window.innerWidth <= 1000 && window.innerHeight <= 500);
+  widget.sync(charts.slice(0, x * y), compact);
 };
 
-const INTERVALS = ["1", "5", "15", "60", "240", "D", "W", "M"];
-const INTERVAL_LABELS = {
-  "1": "1m",
-  "5": "5m",
-  "15": "15m",
-  "30": "30m",
-  "60": "1h",
-  "240": "4h",
-  D: "1D",
-  W: "1W",
-  M: "1M",
-};
+const INTERVALS = Object.keys(INTERVAL_LABELS);
 
 let charts = [];
 let draggedRow = null;
@@ -44,7 +35,7 @@ const updateMarketCount = () => {
 };
 
 const reorderChartsFromTable = () => {
-  charts = [...table.querySelectorAll("tr:not(:first-child)")]
+  charts = [...body.rows]
     .map(row => chartById(row.id.replace("row_", "")))
     .filter(Boolean);
   saveCharts();
@@ -53,6 +44,18 @@ const reorderChartsFromTable = () => {
 
 const enableDragReorder = row => {
   row.draggable = true;
+  row.tabIndex = 0;
+  row.title = "Drag to reorder, or use Alt + ↑ / ↓";
+  row.setAttribute("aria-keyshortcuts", "Alt+ArrowUp Alt+ArrowDown");
+  row.addEventListener("keydown", event => {
+    if (!event.altKey || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
+    const target = event.key === "ArrowUp" ? row.previousElementSibling : row.nextElementSibling;
+    if (!target) return;
+    event.preventDefault();
+    if (event.key === "ArrowUp") target.before(row); else target.after(row);
+    reorderChartsFromTable();
+    row.focus();
+  });
   row.addEventListener("dragstart", () => {
     draggedRow = row;
     row.classList.add("dragging");
@@ -71,7 +74,7 @@ const enableDragReorder = row => {
     event.preventDefault();
     row.classList.remove("drag-over");
     if (!draggedRow || draggedRow === row) return;
-    const rows = [...table.querySelectorAll("tr:not(:first-child)")];
+    const rows = [...body.rows];
     if (rows.indexOf(draggedRow) < rows.indexOf(row)) {
       row.after(draggedRow);
     } else {
@@ -101,6 +104,7 @@ const addChartToTable = item => {
   row.id = "row_" + item.id;
 
   const button = document.createElement("button");
+  button.setAttribute("aria-label", `Remove ${item.symbol}`);
   button.appendChild(document.createTextNode(constants.HEAVY_MULTIPLICATION_X));
   button.addEventListener("click", () => {
     removeCurrentMarket(item.id);
@@ -109,10 +113,15 @@ const addChartToTable = item => {
   row.insertCell().appendChild(button);
 
   const intervalCell = row.cells[2];
+  const intervalButton = document.createElement("button");
+  intervalButton.className = "interval";
+  intervalButton.textContent = displayInterval(item.interval);
+  intervalButton.setAttribute("aria-label", `Change interval for ${item.symbol}`);
+  intervalCell.replaceChildren(intervalButton);
   intervalCell.addEventListener("click", () => {
     const idx = INTERVALS.indexOf(item.interval);
     item.interval = INTERVALS[(idx + 1) % INTERVALS.length];
-    intervalCell.textContent = displayInterval(item.interval);
+    intervalButton.textContent = displayInterval(item.interval);
     saveCharts();
     refreshWidget(item);
   });
@@ -171,4 +180,5 @@ window.addEventListener("gridchange", () => {
   syncCharts();
   urlState.update(charts);
 });
+window.addEventListener("resize", syncCharts);
 updateMarketCount();

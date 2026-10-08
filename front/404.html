@@ -3,9 +3,8 @@
 
 <head>
   <base href="/charts/" />
-  <style></style>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Charts in a grid" />
   <link rel="canonical" href="https://glipitch.github.io/charts/" />
   <script>
@@ -21,24 +20,24 @@
 </head>
 
 <body>
-  <dialog id="settings" aria-label="Settings">
+  <dialog id="settings" aria-label="Settings" tabindex="-1">
     <div class="dialog-content">
       <div class="settings">
         <div class="grid-settings">
           <div class="dimensions-container">
             <label for="x">Columns</label>
             <div class="dimensions">
-              <button class="minus">−</button>
-              <input id="x" type="number" min="1" step="1" max="10" />
-              <button class="plus">+</button>
+              <button class="minus" aria-label="Fewer columns">−</button>
+              <input id="x" type="number" min="1" step="1" max="20" />
+              <button class="plus" aria-label="More columns">+</button>
             </div>
           </div>
           <div class="dimensions-container">
             <label for="y">Rows</label>
             <div class="dimensions">
-              <button class="minus">−</button>
-              <input id="y" type="number" min="1" step="1" max="10" />
-              <button class="plus">+</button>
+              <button class="minus" aria-label="Fewer rows">−</button>
+              <input id="y" type="number" min="1" step="1" max="20" />
+              <button class="plus" aria-label="More rows">+</button>
             </div>
           </div>
         </div>
@@ -58,28 +57,34 @@
         <h4>Current</h4>
         <span class="market-count"></span>
       </div>
-      <table class="current">
-        <tr>
+      <div class="table-scroll current-scroll">
+      <table class="current" aria-label="Current charts">
+        <thead><tr>
           <th>Exchange</th>
           <th>Symbol</th>
           <th>Interval</th>
           <th></th>
-        </tr>
+        </tr></thead>
+        <tbody></tbody>
       </table>
+      </div>
       <p class="empty-state">click an available market to add it</p>
       <button class="clear">Clear</button>
       <div class="divider"></div>
       <h4>Available</h4>
-      <input id="search" type="search" class="search" placeholder="e.g. btc binance" spellcheck="false" />
-      <table class="available">
-        <tr>
+      <input id="search" type="search" class="search" aria-label="Search markets" placeholder="e.g. btc binance" spellcheck="false" autocomplete="off" />
+      <p class="search-status sr-only" role="status"></p>
+      <div class="table-scroll available-scroll">
+      <table class="available" aria-label="Available markets">
+        <thead><tr>
           <th>Exchange</th>
           <th>Symbol</th>
-        </tr>
-        <tr>
+        </tr></thead>
+        <tbody><tr>
           <td>loading...</td>
-        </tr>
+        </tr></tbody>
       </table>
+      </div>
     </div>
   </dialog>
   <header>
@@ -89,7 +94,7 @@
     <button class="theme" aria-label="Theme">
       <svg viewBox="0 0 24 24"></svg>
     </button>
-    <a class="github" href="https://github.com/glipitch/charts">
+    <a class="github" href="https://github.com/glipitch/charts" aria-label="Charts on GitHub">
       <svg viewBox="0 0 24 24">
       </svg>
     </a>
