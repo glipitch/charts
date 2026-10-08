@@ -1,5 +1,6 @@
 import * as constants from "./constants.mjs";
 import * as utilities from "./utilities.mjs";
+let grid;
 export const manage = () => {
   manageDimension("x");
   manageDimension("y");
@@ -11,9 +12,9 @@ export const getValidDimension = raw => {
     && value <= constants.MAX_DIMENSION;
   return isValid ? value : constants.DEFAULT_DIMENSION;
 };
-export const getGrid = () => ({
-  x: getValidDimension(utilities.getProperty("x") || localStorage.getItem("x")),
-  y: getValidDimension(utilities.getProperty("y") || localStorage.getItem("y")),
+export const getGrid = () => grid ||= ({
+  x: getValidDimension(localStorage.getItem("x")),
+  y: getValidDimension(localStorage.getItem("y")),
 });
 
 const getGridScore = ({ x, y, cells, count, targetRatio }) => {
@@ -49,6 +50,7 @@ export const getReasonableGrid = chartCount => {
 const notifyGridChanged = () => window.dispatchEvent(new CustomEvent("gridchange"));
 const setDimension = (key, value, notify = true) => {
   const validValue = getValidDimension(value);
+  grid = { ...getGrid(), [key]: validValue };
   utilities.setProperty(key, validValue);
   localStorage.setItem(key, validValue);
   const input = document.getElementById(key);
@@ -63,10 +65,10 @@ export const setGrid = (x, y, notify = true) => {
 };
 const manageDimension = key => {
   const input = document.getElementById(key);
-  const value = getValidDimension(localStorage.getItem(key));
+  const value = getGrid()[key];
   input.value = value;
   utilities.setProperty(key, value);
-  input.addEventListener("input", () => setDimension(key, input.value));
+  input.addEventListener("change", () => setDimension(key, input.value));
   input.parentElement.querySelector(".plus").addEventListener("click", () => {
     const value = Number(input.value);
     if (value < constants.MAX_DIMENSION) {
@@ -75,7 +77,7 @@ const manageDimension = key => {
     }
   });
   input.parentElement.querySelector(".minus").addEventListener("click", () => {
-    const value = Number(utilities.getProperty(key));
+    const value = getGrid()[key];
     if (value > constants.MIN_DIMENSION) {
       const nextValue = value - 1;
       setDimension(key, nextValue);

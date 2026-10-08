@@ -1,6 +1,6 @@
 import * as constants from "../constants.mjs";
 import * as dimensions from "../dimensions.mjs";
-import * as utilities from "../utilities.mjs";
+import { normalizeCharts } from "./state.mjs";
 
 const safeEncode = value => encodeURIComponent(String(value));
 const DEFAULT_INTERVAL = "60";
@@ -35,26 +35,19 @@ const parseGridSpec = raw => {
   return isValid ? { x, y } : null;
 };
 
-const normalizeChart = item => ({
-  id: utilities.getNewId(),
-  exchange: item.exchange,
-  symbol: item.symbol,
-  interval: item.interval || DEFAULT_INTERVAL,
-});
-
-const parseCompactCharts = encoded => encoded
+const parseCompactCharts = encoded => normalizeCharts(encoded
   .split(",")
   .filter(Boolean)
   .map(part => {
     const fields = part.split(":");
     if (fields.length < 2) return null;
-    return normalizeChart({
+    return {
       exchange: decodeURIComponent(fields[0]),
       symbol: decodeURIComponent(fields[1]),
       interval: fields[2] ? decodeURIComponent(fields[2]) : DEFAULT_INTERVAL,
-    });
+    };
   })
-  .filter(Boolean);
+  .filter(Boolean));
 
 const serializeChart = ({ exchange, symbol, interval }) => {
   const parts = [safeEncode(exchange), safeEncode(symbol)];

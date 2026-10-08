@@ -1,67 +1,72 @@
-import * as utilities from "../utilities.mjs";
-
-const available = document.querySelector(".available");
+import { debounce } from "../utilities.mjs";
+const results = document.querySelector(".available");
 const search = document.querySelector(".search");
-const MAX_ROWS = 200;
-
-let markets = [];
-
-const clearResults = () => {
-  available.querySelectorAll("tr:not(:first-child)").forEach(row => row.remove());
+const status = document.querySelector(".search-status");
+let worker;
+let requestId = 0;
+const showStatus = message => { status.textContent = message; };
+const runSearch = () => {
+  requestId++;
+  results.replaceChildren();
+  if (!search.value.trim()) { showStatus("Search symbols or exchanges"); return; }
+  showStatus("Searching…");
+  worker?.postMessage({ type: "search", query: search.value, id: requestId });
 };
-
-const addOverflowHint = count => {
-  const hint = document.createElement("tr");
-  const td = document.createElement("td");
-  td.colSpan = 2;
-  td.textContent = `${count} more - refine your search`;
-  td.style.textAlign = "center";
-  td.style.opacity = "0.5";
-  hint.appendChild(td);
-  available.appendChild(hint);
+const showError = () => {
+  results.replaceChildren();
+  showStatus("Could not load markets. ");
+  const retry = document.createElement("button");
+  retry.textContent = "Retry";
+  retry.addEventListener("click", () => { worker?.terminate(); worker = undefined; loadAvailable(); });
+  status.append(retry);
 };
-
-const applyFilter = () => {
-  const terms = search.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const filtered = terms.length
-    ? markets.filter(market => {
-        const combined = `${market.exchange} ${market.symbol}`.toLowerCase();
-        return terms.every(term => combined.includes(term));
-      })
-    : [];
-  clearResults();
-  filtered
-    .slice(0, MAX_ROWS)
-    .forEach(market => utilities.addRow(available, [market.exchange, market.symbol]));
-  if (filtered.length > MAX_ROWS) addOverflowHint(filtered.length - MAX_ROWS);
+export const loadAvailable = () => {
+  if (worker) return;
+  showStatus("Loading markets…");
+  try {
+    worker = new Worker(new URL("search-worker.mjs", import.meta.url), { type: "module" });
+    worker.addEventListener("error", showError);
+    worker.addEventListener("message", ({ data }) => {
+      if (data.type === "error") { showError(); return; }
+      if (data.type === "ready") { runSearch(); return; }
+      if (data.id !== requestId) return;
+      results.replaceChildren();
+      data.results.forEach(market => {
+        const item = document.createElement("li");
+        const button = document.createElement("button");
+        button.dataset.exchange = market.exchange;
+        button.dataset.symbol = market.symbol;
+        const name = document.createElement("strong");
+        name.textContent = market.symbol;
+        const exchange = document.createElement("small");
+        exchange.textContent = market.exchange;
+        const add = document.createElement("span");
+        add.textContent = "+";
+        add.setAttribute("aria-hidden", "true");
+        button.append(name, exchange, add);
+        button.setAttribute("aria-label", `Add ${market.symbol} on ${market.exchange}`);
+        item.append(button);
+        results.append(item);
+      });
+      showStatus(data.total ? `${data.total.toLocaleString()} matches${data.total > data.results.length ? " · Showing the first 200" : ""}` : "No matching markets");
+    });
+    worker.postMessage({ type: "load" });
+  } catch { showError(); }
 };
-
-const applyFilterDebounced = utilities.debounce(applyFilter, 500);
-
-export const subscribe = selectionCallback => {
-  available.addEventListener("click", event => {
-    if (event.target.tagName !== "TD") return;
-    const row = event.target.parentElement;
-    const [exchangeCell, symbolCell] = row.children;
-    if (!exchangeCell || !symbolCell) return;
-    row.classList.add("just-added");
-    row.addEventListener("animationend", () => row.classList.remove("just-added"), { once: true });
-    selectionCallback(exchangeCell.textContent, symbolCell.textContent);
-  });
-};
-
-export const loadAvailable = async () => {
-  if (markets.length > 0) return;
-  const response = await fetch("available-markets/data.json");
-  const grouped = await response.json();
-  markets = Object.entries(grouped).flatMap(([exchange, symbols]) =>
-    symbols.map(symbol => ({ exchange, symbol }))
-  );
-  applyFilter();
-};
-
+export const subscribe = callback => results.addEventListener("click", event => {
+  const button = event.target.closest("button[data-symbol]");
+  if (!button) return;
+  callback(button.dataset.exchange, button.dataset.symbol);
+  button.classList.add("just-added");
+  button.addEventListener("animationend", () => button.classList.remove("just-added"), { once: true });
+});
 search.value = localStorage.getItem("search") || "";
+const debouncedSearch = debounce(runSearch, 150);
 search.addEventListener("input", () => {
-  applyFilterDebounced();
+  requestId++;
+  results.replaceChildren();
+  showStatus(search.value.trim() ? "Searching…" : "Search symbols or exchanges");
+  loadAvailable();
+  if (search.value.trim()) debouncedSearch(); else runSearch();
   localStorage.setItem("search", search.value);
 });

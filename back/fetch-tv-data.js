@@ -7,7 +7,7 @@ const CAP = 10000;
 const TYPES = ['stock', 'etf', 'futures', 'forex', 'crypto',
     'index', 'bond', 'cfd', 'warrant', 'crypto_futures'];
 const PREFIXES = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
-const MAX_PREFIX_DEPTH = 2;
+const MAX_PREFIX_DEPTH = 4;
 
 module.exports = async ({ fetch }) => {
     const t0 = Date.now();
@@ -28,6 +28,7 @@ module.exports = async ({ fetch }) => {
     ensureDirectory(targetDirectory);
     const reduced = reduce(allData);
     const filtered = dedupe(reduced, ({ symbol, exchange }) => `${symbol}-${exchange}`);
+    if (!filtered.length) throw new Error('Refusing to publish an empty catalogue');
     filtered.sort((a, b) =>
         a.exchange.localeCompare(b.exchange) || a.symbol.localeCompare(b.symbol));
 
@@ -35,6 +36,14 @@ module.exports = async ({ fetch }) => {
     for (const { exchange, symbol } of filtered) {
         if (!grouped[exchange]) grouped[exchange] = [];
         grouped[exchange].push(symbol);
+    }
+    const previousPath = path.join(targetDirectory, 'data.json');
+    if (fs.existsSync(previousPath)) {
+        const previous = JSON.parse(fs.readFileSync(previousPath, 'utf8'));
+        const previousCount = Object.values(previous).reduce((count, symbols) => count + symbols.length, 0);
+        if (filtered.length < previousCount * 0.75) {
+            throw new Error(`Refusing catalogue drop from ${previousCount} to ${filtered.length} markets`);
+        }
     }
     writeFile('data.json', JSON.stringify(grouped));
     const elapsed = ((Date.now() - t0) / 1000).toFixed(0);
@@ -90,7 +99,7 @@ async function fetchByPrefix(exchange, type, text, fetch) {
             all = all.concat(await fetchByPrefix(exchange, type, query, fetch));
         } else {
             if (total >= CAP) {
-                console.log(`    ${exchange}/${type}/${query}: ~${total} results (max depth, accepting cap)`);
+                throw new Error(`Incomplete catalogue: ${exchange}/${type}/${query} exceeds the search cap`);
             }
             all = all.concat(await paginateAll(probe, exchange, type, query, fetch));
         }
@@ -110,7 +119,7 @@ async function paginateAll(firstPage, exchange, type, text, fetch) {
     while (remaining > 0) {
         await sleep(DELAY);
         const page = await fetchPageSafe(exchange, type, text, start, fetch);
-        if (!page?.symbols?.length) break;
+        if (!page?.symbols?.length) throw new Error(`Incomplete page: ${exchange}/${type}/${text}@${start}`);
         symbols.push(...page.symbols);
         remaining = page.symbols_remaining || 0;
         start += 50;
@@ -124,8 +133,7 @@ async function fetchPageSafe(exchange, type, text, start, fetch, retries = 3) {
             return await fetchPage(exchange, type, text, start, fetch);
         } catch (err) {
             if (attempt === retries) {
-                console.error(`  FAIL ${exchange}/${type}/${text}@${start}: ${err.message}`);
-                return null;
+                throw new Error(`Failed ${exchange}/${type}/${text}@${start}: ${err.message}`);
             }
             await sleep(2000 * attempt);
         }
@@ -139,18 +147,13 @@ async function discoverExchanges(fetch) {
     for (const type of TYPES) {
         let start = 0;
         while (true) {
-            try {
-                const data = await fetchPage('', type, '', start, fetch);
-                if (data?.symbols) {
-                    data.symbols.forEach(s => {
-                        seen.add(s.prefix || s.source_id || s.exchange);
-                    });
-                }
-                if (!data?.symbols_remaining) break;
-            } catch (e) {
-                console.warn(`  discover ${type}@${start}: ${e.message}`);
-                break;
-            }
+            const data = await fetchPageSafe('', type, '', start, fetch);
+            data.symbols.forEach(s => {
+                const exchange = s.prefix || s.source_id || s.exchange;
+                if (typeof exchange !== 'string' || !exchange.trim()) throw new Error('Invalid exchange in response');
+                seen.add(exchange);
+            });
+            if (!data.symbols_remaining) break;
             start += 50;
             await sleep(DELAY);
         }
@@ -175,11 +178,26 @@ function dedupe(arr, keyFn) {
 }
 
 function reduce(symbols) {
-    return symbols.map(({ symbol, exchange }) => ({ symbol, exchange }));
+    return symbols.map(({ symbol, exchange }) => {
+        if (typeof symbol !== 'string' || !symbol || typeof exchange !== 'string' || !exchange) {
+            throw new Error('Invalid market in response');
+        }
+        return {
+            symbol: symbol.replace(/<\/?em>/gi, ''),
+            exchange
+        };
+    });
 }
 
 function writeFile(fileName, content) {
-    fs.writeFileSync(path.join(targetDirectory, fileName), content);
+    const destination = path.join(targetDirectory, fileName);
+    const temporary = `${destination}.tmp`;
+    try {
+        fs.writeFileSync(temporary, content);
+        fs.renameSync(temporary, destination);
+    } finally {
+        if (fs.existsSync(temporary)) fs.unlinkSync(temporary);
+    }
 }
 
 function ensureDirectory(dir) {
@@ -188,14 +206,20 @@ function ensureDirectory(dir) {
 
 async function fetchPage(exchange, type, text, start, fetch) {
     const params = new URLSearchParams({
-        text, hl: '1', exchange, lang: 'en',
+        text, hl: '0', exchange, lang: 'en',
         type, domain: 'production', sort_by_country: 'US'
     });
     if (start > 0) params.set('start', start);
     const url = `https://symbol-search.tradingview.com/s/?${params}`;
     const response = await fetch(url, { headers: HEADERS });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
+    const data = await response.json();
+    if (!Array.isArray(data?.symbols) || data.symbols_remaining !== undefined &&
+        (!Number.isInteger(data.symbols_remaining) || data.symbols_remaining < 0)) {
+        throw new Error('Invalid symbol response');
+    }
+    if (!data.symbols.length && data.symbols_remaining > 0) throw new Error('Missing results in response');
+    return data;
 }
 
 const HEADERS = {

@@ -8,6 +8,5 @@ import "./opacity.mjs";
 available.subscribe(current.addCurrentMarket);
 dimensions.manage();
 current.loadCurrentMarkets();
-//dialog.open();//dev only
-await available.loadAvailable();
+if (!document.querySelector(".chart-empty").hidden) dialog.open();
 

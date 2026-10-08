@@ -126,6 +126,12 @@ test("URL state keeps encoded separators inside chart fields", async () => {
   assert.equal(state.charts[1].interval, "60");
 });
 
+test("URL state migrates highlighted symbols from old shared links", async () => {
+  setupBrowser("http://localhost:3000/BBG:%3Cem%3EG%3C%2Fem%3ECOMIJ");
+  const urlState = await importFresh("../front/current-markets/url-state.mjs");
+  assert.equal(urlState.getState().charts[0].symbol, "GCOMIJ");
+});
+
 test("URL state omits :60 when serializing default intervals", async () => {
   setupBrowser("https://glipitch.github.io/charts/Binance:OLD");
   const dimensions = await importFresh("../front/dimensions.mjs");
@@ -174,6 +180,8 @@ test("TradingView does not keep the initial page load open", async () => {
       return {
         tagName,
         classList: { add() {} },
+        setAttribute() {},
+        replaceChildren() {},
         addEventListener(type, listener) {
           listeners.set(type, listener);
         },

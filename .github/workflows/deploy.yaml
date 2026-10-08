@@ -1,0 +1,36 @@
+name: Deploy Charts
+
+on:
+  push:
+    branches: [main]
+    paths: [front/**, back/build.js, .github/workflows/deploy.yaml]
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Fetch TradingView data]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-charts
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: main
+      - name: Build shared entry point
+        run: node back/build.js
+      - name: Verify
+        run: node --test
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
+        with:
+          folder: front
+          branch: gh-pages

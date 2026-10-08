@@ -9,8 +9,7 @@ const bash = process.platform === 'win32'
   ? 'C:/Program Files/Git/bin/bash.exe'
   : 'bash';
 const workflow = readFileSync(new URL('../.github/workflows/fetch-tv-data.yaml', import.meta.url), 'utf8');
-const commitStep = workflow.split('      - name: Commit updated data')[1]
-  .split('      - name: Deploy to GitHub Pages')[0];
+const commitStep = workflow.split('      - name: Commit updated data')[1];
 const pushScript = commitStep.split('        run: |')[1].trimEnd()
   .split(/\r?\n/).slice(1).map(line => line.slice(10)).join('\n');
 
@@ -91,7 +90,7 @@ git() {
   assert.equal(readFileSync(join(directory, 'outputs'), 'utf8').trim(), 'changes_detected=true');
 });
 
-test('unchanged data skips committing and deploying', options, t => {
+test('unchanged data skips committing', options, t => {
   const { directory, result } = runScenario(t, 'advance_remote\necho other-data > front/available-markets/data.json');
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.equal(readFileSync(join(directory, 'outputs'), 'utf8').trim(), 'changes_detected=false');
