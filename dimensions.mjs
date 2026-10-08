@@ -1,5 +1,5 @@
-import * as constants from "./constants.mjs";
-import * as utilities from "./utilities.mjs";
+import * as constants from "./constants.mjs?v=e5e8dd98c0fa";
+import * as utilities from "./utilities.mjs?v=e5e8dd98c0fa";
 export const manage = () => {
   manageDimension("x");
   manageDimension("y");
@@ -66,7 +66,7 @@ const manageDimension = key => {
   const value = getValidDimension(localStorage.getItem(key));
   input.value = value;
   utilities.setProperty(key, value);
-  input.addEventListener("input", () => setDimension(key, input.value));
+  input.addEventListener("change", () => setDimension(key, input.value));
   input.parentElement.querySelector(".plus").addEventListener("click", () => {
     const value = Number(input.value);
     if (value < constants.MAX_DIMENSION) {

@@ -25,7 +25,7 @@ const observer = typeof IntersectionObserver === "function" ? new IntersectionOb
   records.filter(record => record.isIntersecting).forEach(record => {
     observer.unobserve(record.target);
     const entry = entries.get(record.target.id.slice(3));
-    if (entry) start(entry);
+    if (entry?.container === record.target) start(entry);
   });
 }, { root: main, rootMargin: "150px" }) : null;
 
@@ -82,6 +82,10 @@ export const sync = (charts, lazy = false) => {
     let entry = entries.get(chart.id);
     if (entry && entry.chart.interval !== chart.interval) { remove(chart.id); entry = undefined; }
     if (!entry) addWidget(chart, lazy);
+    else if (!lazy && !entry.started) {
+      observer?.unobserve(entry.container);
+      start(entry);
+    }
     const container = entries.get(chart.id).container;
     if (container.previousElementSibling !== previous) main.insertBefore(container, previous?.nextSibling || main.firstChild);
     previous = container;

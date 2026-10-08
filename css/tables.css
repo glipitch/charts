@@ -8,20 +8,23 @@
     padding-top: 2.5rem;
 }
 
-table {
+.table-scroll {
     color: var(--highlight-color);
     display: block;
     max-height: 20rem;
     min-height: 10rem;
     overflow-y: auto;
     overflow-x: auto;
-    border-collapse: collapse;
     border: 1px solid var(--border-color);
     border-radius: 0.25rem;
     width: fit-content;
+    max-width: calc(100% - 1rem);
+    flex-shrink: 0;
     margin-bottom: 0.75rem;
     box-shadow: var(--shadow);
 }
+table { color: var(--highlight-color); border-collapse: collapse; }
+.interval { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
 
 th {
     position: sticky;
@@ -51,8 +54,7 @@ tr:hover {
     background-color: var(--dialog-hover);
 }
 
-tbody tr:nth-child(even),
-table tr:nth-child(even) {
+tbody tr:nth-child(odd) {
     background-color: var(--alternate-row-color);
 }
 
@@ -71,7 +73,7 @@ table tr:nth-child(even) {
     border: none;
     padding: 0;
     cursor: pointer;
-    color: brown;
+    color: var(--remove-color);
     transition: transform 0.15s ease;
 }
 
@@ -99,11 +101,11 @@ th:nth-child(4) {
     width: 1.5rem;
 }
 
-.available {
+.available-scroll {
     margin-bottom: 2rem;
 }
 
-.available td {
+.available tr[data-market] td {
     cursor: pointer;
 }
 
@@ -198,5 +200,5 @@ h4 {
 }
 
 .current tr.drag-over {
-    box-shadow: 0 -2px 0 0 brown;
+    box-shadow: 0 -2px 0 0 var(--opacity-color);
 }

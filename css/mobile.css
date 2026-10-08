@@ -1,0 +1,55 @@
+/* Keep the original window and controls; give them room on a phone. */
+@media (max-width: 600px), (max-width: 1000px) and (max-height: 500px) {
+  main {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: max(360px, 65dvh);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+@media (max-width: 800px), (max-width: 1000px) and (max-height: 500px), (pointer: coarse) {
+  header {
+    top: max(.4rem, env(safe-area-inset-top));
+    right: max(.4rem, env(safe-area-inset-right));
+    gap: 0;
+    padding: 0;
+  }
+  header > * { width: 44px; height: 44px; justify-content: center; }
+  .dialog-content {
+    box-sizing: border-box;
+    padding-top: calc(max(.4rem, env(safe-area-inset-top)) + 52px);
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    overscroll-behavior-y: contain;
+  }
+  .dialog-content > * { flex-shrink: 0; }
+  .settings { box-sizing: border-box; padding: .5rem; }
+  .grid-settings { gap: .75rem; }
+  .dimensions-container { flex-direction: column; gap: .25rem; }
+  .dimensions > button, .dimensions input { box-sizing: border-box; width: 44px; height: 44px; font-size: 16px; }
+  .dimensions input { text-align: center; }
+  .opacity-row > label, .opacity-row > span { min-height: 44px; display: flex; align-items: center; }
+  .opacity-row > input { min-width: 0; min-height: 44px; }
+  .table-scroll {
+    box-sizing: border-box;
+    width: calc(100% - 1rem);
+    max-width: 24rem;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+  table { width: 100%; table-layout: fixed; }
+  th { position: static; font-size: .65rem; letter-spacing: 0; padding: .35rem .25rem; white-space: nowrap; }
+  td, th { min-width: 0 !important; overflow-wrap: anywhere; }
+  .available td { box-sizing: border-box; height: 44px; }
+  .current td:nth-child(1), .current th:nth-child(1) { width: 25%; }
+  .current td:nth-child(3), .current th:nth-child(3) { width: 3.5rem; }
+  .current td:nth-child(3) { padding: 0; }
+  .current td:nth-child(4), .current th:nth-child(4) { width: 44px; padding: 0; }
+  .current td:nth-child(4) > button { width: 44px; height: 44px; }
+  .interval { min-height: 44px; width: 100%; }
+  .available td:nth-child(1), .available th:nth-child(1) { width: 35%; }
+  .search { box-sizing: border-box; width: calc(100% - 1rem); max-width: 24rem; min-height: 44px; font-size: 16px; }
+  .clear { min-height: 44px; }
+  .available-scroll { margin-bottom: 0; }
+}

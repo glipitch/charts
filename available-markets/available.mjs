@@ -1,19 +1,21 @@
-import { addRow, debounce } from "../utilities.mjs";
+import { addRow, debounce } from "../utilities.mjs?v=e5e8dd98c0fa";
 
 const available = document.querySelector(".available");
+const body = available.tBodies[0];
 const search = document.querySelector(".search");
+const status = document.querySelector(".search-status");
 let worker;
 let requestId = 0;
 
-const clearResults = () => available.querySelectorAll("tr:not(:first-child)").forEach(row => row.remove());
+const clearResults = () => { body.replaceChildren(); status.textContent = ""; };
 const showMessage = message => {
-  const row = document.createElement("tr");
+  const row = body.insertRow();
   const cell = row.insertCell();
   cell.colSpan = 2;
   cell.textContent = message;
   cell.style.textAlign = "center";
   cell.style.opacity = "0.5";
-  available.appendChild(row);
+  status.textContent = message;
   return cell;
 };
 const runSearch = () => {
@@ -24,11 +26,14 @@ const runSearch = () => {
   worker?.postMessage({ type: "search", query: search.value, id: requestId });
 };
 const showError = () => {
+  worker?.terminate();
+  worker = undefined;
+  requestId++;
   clearResults();
   const cell = showMessage("Could not load markets. ");
   const retry = document.createElement("button");
   retry.textContent = "Retry";
-  retry.addEventListener("click", () => { worker?.terminate(); worker = undefined; loadAvailable(); });
+  retry.addEventListener("click", loadAvailable);
   cell.appendChild(retry);
 };
 export const loadAvailable = () => {
@@ -36,9 +41,11 @@ export const loadAvailable = () => {
   clearResults();
   showMessage("loading...");
   try {
-    worker = new Worker(new URL("search-worker.mjs", import.meta.url), { type: "module" });
-    worker.addEventListener("error", showError);
+    worker = new Worker(new URL("search-worker.mjs?v=e5e8dd98c0fa", import.meta.url), { type: "module" });
+    const currentWorker = worker;
+    worker.addEventListener("error", () => { if (worker === currentWorker) showError(); });
     worker.addEventListener("message", ({ data }) => {
+      if (worker !== currentWorker) return;
       if (data.type === "error") { showError(); return; }
       if (data.type === "ready") { runSearch(); return; }
       if (data.id !== requestId) return;
@@ -48,6 +55,7 @@ export const loadAvailable = () => {
         row.dataset.market = "true";
         row.tabIndex = 0;
       });
+      status.textContent = `${data.total.toLocaleString()} matching markets`;
       if (!data.total) showMessage("No matching markets");
       else if (data.total > data.results.length) showMessage(`${data.total - data.results.length} more - refine your search`);
     });
@@ -73,7 +81,9 @@ const debouncedSearch = debounce(runSearch, 150);
 search.addEventListener("input", () => {
   requestId++;
   clearResults();
-  loadAvailable();
-  if (search.value.trim()) { showMessage("Searching…"); debouncedSearch(); }
+  if (search.value.trim()) {
+    if (!worker) loadAvailable(); else showMessage("Searching…");
+    debouncedSearch();
+  }
   localStorage.setItem("search", search.value);
 });

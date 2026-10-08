@@ -7,7 +7,7 @@ export const getNewId = (len = 32) => {
 }
 const addCell = (row, text) => row.insertCell().appendChild(document.createTextNode(text));
 export const addRow = (table, texts) => {
-  const row = table.insertRow();
+  const row = (table.tBodies[0] || table.createTBody()).insertRow();
   texts.forEach(text => addCell(row, text));
   return row;
 }
@@ -31,10 +31,14 @@ export const debounce = (func, delay = 250) => {
   };
 }
 export const loadSvg = async (selector, path) => {
-  const res = await fetch(path);
-  const text = await res.text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(text, 'image/svg+xml');
-  const svg = document.querySelector(selector).querySelector('svg');
-  doc.querySelectorAll('path').forEach(p => svg.appendChild(p.cloneNode(true)));
+  try {
+    const res = await fetch(path);
+    if (!res.ok) return false;
+    const text = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'image/svg+xml');
+    const svg = document.querySelector(selector).querySelector('svg');
+    doc.querySelectorAll('path').forEach(p => svg.appendChild(p.cloneNode(true)));
+    return true;
+  } catch { return false; }
 };
