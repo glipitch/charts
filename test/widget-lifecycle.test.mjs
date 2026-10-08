@@ -64,6 +64,7 @@ test('stacked charts wait until near the viewport before loading', async () => {
   intersect(main.children[1]);
   await Promise.resolve();
   assert.equal(calls.length, 1);
+  assert.deepEqual(calls[0].disabled_features, ['vert_touch_drag_scroll']);
   const removed = main.children[2];
   widget.sync([charts[0]], true);
   intersect(removed);
@@ -79,6 +80,30 @@ test('returning to the desktop grid starts charts that were waiting below the ph
   assert.equal(calls.length, 0);
   widget.sync(charts);
   await Promise.resolve();
+  assert.equal(calls.length, 3);
+  assert.ok(calls.every(call => call.disabled_features.length === 0));
+});
+
+test('crossing the stacked layout boundary changes touch policy once, while ordinary resizing retains embeds', async () => {
+  const { main, calls, intersect } = browser({ lazy: true });
+  const widget = await import(`../front/current-markets/widget.mjs?lifecycle=${importId++}`);
+  widget.sync([charts[0]]);
+  await Promise.resolve();
+  const desktop = main.children[1];
+  assert.deepEqual(calls[0].disabled_features, []);
+  widget.sync([charts[0]], true);
+  const phone = main.children[1];
+  assert.notEqual(phone, desktop);
+  intersect(phone);
+  await Promise.resolve();
+  assert.deepEqual(calls[1].disabled_features, ['vert_touch_drag_scroll']);
+  widget.sync([charts[0]], true);
+  await Promise.resolve();
+  assert.equal(main.children[1], phone);
+  assert.equal(calls.length, 2);
+  widget.sync([charts[0]]);
+  await Promise.resolve();
+  assert.deepEqual(calls[2].disabled_features, []);
   assert.equal(calls.length, 3);
 });
 
