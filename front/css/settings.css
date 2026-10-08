@@ -11,5 +11,3 @@
 .opacity-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 16px; }
 .opacity-row output { font-variant-numeric: tabular-nums; color: var(--dialog-label); }
 .opacity-row input { grid-column: 1 / -1; width: 100%; min-height: 28px; margin: 0; accent-color: var(--accent); }
-.blur-row { display: flex; align-items: center; min-height: 44px; gap: 8px; }
-.blur-row input { accent-color: var(--accent); }
