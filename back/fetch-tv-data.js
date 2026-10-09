@@ -9,8 +9,13 @@ const TYPES = ['stock', 'etf', 'futures', 'forex', 'crypto',
 const PREFIXES = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
 const MAX_PREFIX_DEPTH = 4;
 
+class SearchCapError extends Error {}
+
 module.exports = async ({ fetch }) => {
     const t0 = Date.now();
+    const previousPath = path.join(targetDirectory, 'data.json');
+    const previous = fs.existsSync(previousPath)
+        ? JSON.parse(fs.readFileSync(previousPath, 'utf8')) : {};
 
     console.log('Discovering exchanges...');
     const exchanges = await discoverExchanges(fetch);
@@ -19,7 +24,20 @@ module.exports = async ({ fetch }) => {
     let allData = [];
     for (let i = 0; i < exchanges.length; i++) {
         const exchange = exchanges[i];
-        const symbols = await fetchExchange(exchange, fetch);
+        let symbols;
+        try {
+            symbols = await fetchExchange(exchange, fetch);
+        } catch (error) {
+            const savedSymbols = Object.hasOwn(previous, exchange) ? previous[exchange] : undefined;
+            if (!(error instanceof SearchCapError) || !Array.isArray(savedSymbols) ||
+                !savedSymbols.length || savedSymbols.some(symbol => typeof symbol !== 'string' || !symbol)) {
+                throw error;
+            }
+            // Discard the entire partial exchange and retain its last complete
+            // catalogue. Description searches can hit the cap even at max depth.
+            symbols = savedSymbols.map(symbol => ({ symbol, exchange }));
+            console.warn(`::warning::${error.message}; retaining ${symbols.length} previously saved ${exchange} markets`);
+        }
         allData = allData.concat(symbols);
         const pct = ((i + 1) / exchanges.length * 100).toFixed(0);
         console.log(`[${i + 1}/${exchanges.length}] ${exchange}: ${symbols.length} — ${allData.length} total (${pct}%)`);
@@ -37,9 +55,7 @@ module.exports = async ({ fetch }) => {
         if (!grouped[exchange]) grouped[exchange] = [];
         grouped[exchange].push(symbol);
     }
-    const previousPath = path.join(targetDirectory, 'data.json');
-    if (fs.existsSync(previousPath)) {
-        const previous = JSON.parse(fs.readFileSync(previousPath, 'utf8'));
+    if (Object.keys(previous).length) {
         const previousCount = Object.values(previous).reduce((count, symbols) => count + symbols.length, 0);
         if (filtered.length < previousCount * 0.75) {
             throw new Error(`Refusing catalogue drop from ${previousCount} to ${filtered.length} markets`);
@@ -99,7 +115,7 @@ async function fetchByPrefix(exchange, type, text, fetch) {
             all = all.concat(await fetchByPrefix(exchange, type, query, fetch));
         } else {
             if (total >= CAP) {
-                throw new Error(`Incomplete catalogue: ${exchange}/${type}/${query} exceeds the search cap`);
+                throw new SearchCapError(`Incomplete catalogue: ${exchange}/${type}/${query} exceeds the search cap`);
             }
             all = all.concat(await paginateAll(probe, exchange, type, query, fetch));
         }
