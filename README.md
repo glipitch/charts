@@ -18,4 +18,4 @@ On phones, the same selected charts form a scrolling column without changing the
 
 Run `node back/serve.js` locally and `node --test` for checks. Edit `front/index.html`, then run `node back/build.js` to generate the matching GitHub Pages fallback and a versioned release in `dist`. Deployment builds and tests the release, runs on frontend changes, and follows successful catalogue refreshes. Versioned asset URLs keep older cached scripts from mixing with a new page.
 
-Market search runs in a worker. Catalogue refreshes preserve the previous file on request failures, capped results, or a drop greater than 25% in market count.
+Market search runs in a worker. Catalogue refreshes preserve the previous file on request failures or a drop greater than 25% in market count. When a search remains capped after subdivision, the refresh retains that exchange's previously saved markets with a workflow warning and updates the other exchanges. A capped exchange without valid saved data still stops publication.
