@@ -1,9 +1,9 @@
-import * as current from "../current-markets/current.mjs?v=2df584b8f1cb";
-import { loadSvg } from "../utilities.mjs?v=2df584b8f1cb";
+import * as current from "../current-markets/current.mjs?v=4ae14f326071";
+import { loadSvg } from "../utilities.mjs?v=4ae14f326071";
 
 const theme = document.querySelector(".theme");
 
-loadSvg(".theme", "svg/theme.svg?v=2df584b8f1cb");
+loadSvg(".theme", "svg/theme.svg?v=4ae14f326071");
 theme.addEventListener("click", event => {
   const currentTheme = document.documentElement.dataset.theme;
   const nextTheme = currentTheme === "light" ? "dark" : "light";
