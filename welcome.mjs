@@ -1,8 +1,9 @@
-import { createMarketSearch, loadAvailable } from "./available-markets/market-search.mjs?v=e698ad81464a";
-import { addCurrentMarket, getCurrentMarkets } from "./current-markets/current.mjs?v=e698ad81464a";
-import { setGrid } from "./dimensions.mjs?v=e698ad81464a";
-import { open } from "./header/dialog.mjs?v=e698ad81464a";
-import { searchFor } from "./available-markets/available.mjs?v=e698ad81464a";
+import { createMarketSearch, loadAvailable } from "./available-markets/market-search.mjs?v=7d0691b8c6f8";
+import { addCurrentMarket, getCurrentMarkets } from "./current-markets/current.mjs?v=7d0691b8c6f8";
+import { setGrid } from "./dimensions.mjs?v=7d0691b8c6f8";
+import { open } from "./header/dialog.mjs?v=7d0691b8c6f8";
+import { searchFor } from "./available-markets/available.mjs?v=7d0691b8c6f8";
+import { showFirstChartGuide } from "./header/first-chart-guide.mjs?v=7d0691b8c6f8";
 
 const form = document.querySelector(".welcome-search-form");
 const input = document.querySelector("#welcome-search");
@@ -39,6 +40,7 @@ if (form && results && status) {
         if (!getCurrentMarkets().length) setGrid(1, 1, false);
         addCurrentMarket(market.exchange, market.symbol, market.daily);
         document.querySelector(".dialog-visibility").focus({ preventScroll: true });
+        showFirstChartGuide();
       });
       item.appendChild(button);
       results.appendChild(item);

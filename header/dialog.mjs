@@ -1,4 +1,4 @@
-import { loadSvg } from "../utilities.mjs?v=e698ad81464a";
+import { loadSvg } from "../utilities.mjs?v=7d0691b8c6f8";
 
 const dialog = document.querySelector("dialog");
 const chevron = document.querySelector(".dialog-visibility");
@@ -29,6 +29,7 @@ export const open = () => {
   previousFocus = document.activeElement;
   setCurrentVisibility("visible");
   dialog.show();
+  window.dispatchEvent(new CustomEvent("settingsopen"));
   const compact = window.innerWidth <= 800 || (window.innerWidth <= 1000 && window.innerHeight <= 500) || window.matchMedia('(pointer: coarse)').matches;
   if (compact) {
     dialog.querySelector(".dialog-content").scrollTop = 0;
@@ -48,4 +49,4 @@ window.visualViewport?.addEventListener("resize", sizeWindow);
 window.addEventListener("resize", sizeWindow);
 sizeWindow();
 
-loadSvg(".dialog-visibility", "svg/chevron.svg?v=e698ad81464a");
+loadSvg(".dialog-visibility", "svg/chevron.svg?v=7d0691b8c6f8");
