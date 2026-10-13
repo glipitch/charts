@@ -15,6 +15,13 @@
     font-size: 0.85rem;
 }
 
+.theme-settings { display: flex; align-items: center; gap: .5rem; padding: 0; margin: 0; }
+.theme-settings legend { float: left; margin-right: .6rem; padding: 0; color: var(--dialog-label); }
+.theme-settings label { display: flex; align-items: center; gap: .35rem; min-height: 44px; padding: 0 .4rem; cursor: pointer; }
+.theme-settings input { margin: 0; accent-color: var(--opacity-color); }
+.settings-source { color: var(--dialog-label); font-size: .75rem; padding: .75rem; margin-top: .5rem; }
+.settings-source:hover { color: var(--highlight-color); }
+
 .grid-settings {
     display: flex;
     flex-direction: row;

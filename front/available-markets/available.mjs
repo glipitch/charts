@@ -1,18 +1,11 @@
-import { addRow, debounce } from "../utilities.mjs";
+import { addRow } from "../utilities.mjs";
+import { createMarketSearch, loadAvailable } from "./market-search.mjs";
+export { loadAvailable, subscribeCurrent } from "./market-search.mjs";
 
 const available = document.querySelector(".available");
 const body = available.tBodies[0];
 const search = document.querySelector(".search");
 const status = document.querySelector(".search-status");
-let worker;
-let requestId = 0;
-let getCurrentCharts = () => [];
-let applyCurrentMetadata = () => {};
-
-export const subscribeCurrent = (getCharts, applyMetadata) => {
-  getCurrentCharts = getCharts;
-  applyCurrentMetadata = applyMetadata;
-};
 
 const clearResults = () => { body.replaceChildren(); status.textContent = ""; };
 const showMessage = message => {
@@ -25,56 +18,29 @@ const showMessage = message => {
   status.textContent = message;
   return cell;
 };
-const runSearch = () => {
-  requestId++;
+const runSearch = createMarketSearch(data => {
   clearResults();
-  if (!search.value.trim()) return;
-  showMessage("Searching…");
-  worker?.postMessage({ type: "search", query: search.value, id: requestId });
-};
-const showError = () => {
-  worker?.terminate();
-  worker = undefined;
-  requestId++;
-  clearResults();
-  const cell = showMessage("Could not load markets. ");
-  const retry = document.createElement("button");
-  retry.textContent = "Retry";
-  retry.addEventListener("click", loadAvailable);
-  cell.appendChild(retry);
-};
-export const loadAvailable = () => {
-  if (worker) return;
-  clearResults();
-  showMessage("loading...");
-  try {
-    worker = new Worker(new URL("search-worker.mjs", import.meta.url), { type: "module" });
-    const currentWorker = worker;
-    worker.addEventListener("error", () => { if (worker === currentWorker) showError(); });
-    worker.addEventListener("message", ({ data }) => {
-      if (worker !== currentWorker) return;
-      if (data.type === "error") { showError(); return; }
-      if (data.type === "ready") {
-        worker.postMessage({ type: "resolve", charts: getCurrentCharts() });
-        runSearch();
-        return;
-      }
-      if (data.type === "resolved") { applyCurrentMetadata(data.charts); return; }
-      if (data.id !== requestId) return;
-      clearResults();
-      data.results.forEach(market => {
-        const row = addRow(available, [market.exchange, market.symbol]);
-        row.dataset.market = "true";
-        if (market.daily) row.dataset.daily = "true";
-        row.tabIndex = 0;
-      });
-      status.textContent = `${data.total.toLocaleString()} matching markets`;
-      if (!data.total) showMessage("No matching markets");
-      else if (data.total > data.results.length) showMessage(`${data.total - data.results.length} more - refine your search`);
-    });
-    worker.postMessage({ type: "load" });
-  } catch { showError(); }
-};
+  if (data.type === "clear") return;
+  if (data.type === "loading") { showMessage("Searching…"); return; }
+  if (data.type === "error") {
+    const cell = showMessage("Could not load markets. ");
+    const retry = document.createElement("button");
+    retry.textContent = "Retry";
+    retry.addEventListener("click", loadAvailable);
+    cell.appendChild(retry);
+    return;
+  }
+  data.results.forEach(market => {
+    const row = addRow(available, [market.exchange, market.symbol]);
+    row.dataset.market = "true";
+    if (market.daily) row.dataset.daily = "true";
+    row.tabIndex = 0;
+  });
+  status.textContent = `${data.total.toLocaleString()} matching markets`;
+  if (!data.total) showMessage("No matching markets");
+  else if (data.total > data.results.length) showMessage(`${data.total - data.results.length} more - refine your search`);
+});
+
 export const subscribe = callback => {
   const select = event => {
     if (event.type === "keydown" && !["Enter", " "].includes(event.key)) return;
@@ -90,14 +56,9 @@ export const subscribe = callback => {
 };
 
 search.value = localStorage.getItem("search") || "";
-const debouncedSearch = debounce(runSearch, 150);
+if (search.value.trim()) runSearch(search.value);
 search.addEventListener("input", () => {
-  requestId++;
-  clearResults();
-  if (search.value.trim()) {
-    if (!worker) loadAvailable(); else showMessage("Searching…");
-    debouncedSearch();
-  }
+  runSearch(search.value);
   localStorage.setItem("search", search.value);
 });
 
