@@ -134,6 +134,11 @@ const symbolAliases = new Map([
 export const canonicalExchange = (exchange, symbol = "") =>
   symbolAliases.get(`${exchange.toUpperCase()}:${symbol}`) || aliases.get(exchange.toLowerCase()) || exchange;
 
+// This old catalogue entry was a futures family, not a chartable contract.
+// Its front continuous contract was verified in an embedded chart.
+export const canonicalSymbol = (exchange, symbol) =>
+  symbol === "BT" && canonicalExchange(exchange, symbol).toUpperCase() === "RUS" ? "BT1!" : symbol;
+
 // Widget EOD availability: tradingview.com/widget-docs/markets/europe/.
 // COT is weekly data; the audited FINRA short-volume series are EOD.
 const dailySources = new Set(["BER", "COT", "COT2", "DUS", "EUREX", "FWB", "GPW", "HAM", "HAN", "MIL", "MUN", "NEWCONNECT", "SIX", "XETR"]);

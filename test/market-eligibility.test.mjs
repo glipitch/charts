@@ -16,6 +16,39 @@ test("the collector keeps canonical source IDs and merges duplicate EOD metadata
   assert.equal(findMarkets(prepare(catalogue), "same cot2").results[0].daily, true);
 });
 
+test("futures families expand to actual contracts with their own source IDs", () => {
+  const catalogue = buildCatalogue([
+    { exchange: "RUS", symbol: "BT", type: "futures", contracts: [{ symbol: "BT1!" }, { symbol: "BTZ2026" }] },
+    { exchange: "CME", source_id: "CME_MINI", symbol: "ES", contracts: [
+      { symbol: "ES1!", prefix: "CME_MINI" }, { symbol: "ES2!", prefix: "CME_MINI" },
+      { symbol: "OTHER", prefix: "OTHER", params: ["eod"] },
+    ] },
+    { exchange: "EUREX", symbol: "FDAX", contracts: [{ symbol: "FDAX1!" }] },
+    { exchange: "CME_MINI", symbol: "ES1!" },
+    { exchange: "TEST", symbol: "NO_CONTRACTS", contracts: [] },
+  ]);
+  assert.deepEqual(catalogue, { CME_MINI: ["ES1!", "ES2!"], EUREX: ["FDAX1!"], OTHER: [["OTHER", "D"]], RUS: ["BT1!", "BTZ2026"] });
+  assert.equal(findMarkets(prepare(catalogue), "bt rus").results[0].symbol, "BT1!");
+  assert.equal(findMarkets(prepare(catalogue), "fdax").results[0].daily, true);
+  assert.throws(() => buildCatalogue([{ exchange: "RUS", symbol: "BT", contracts: [null] }]), /Invalid futures contract/);
+});
+
+test("the verified BT family migrates in old links, saved charts and cached catalogues", () => {
+  const [chart] = normalizeCharts([{ id: "bt", exchange: "RUS", symbol: "BT", interval: "240" }]);
+  assert.deepEqual(chart, { id: "bt", exchange: "RUS", symbol: "BT1!", interval: "240" });
+  const groups = prepare({ RUS: ["BT"], TEST: ["BT"] });
+  assert.deepEqual(findMarkets(groups, "bt1! rus").results, [{ exchange: "RUS", symbol: "BT1!" }]);
+  assert.deepEqual(resolveMarkets(groups, [chart]), [{ id: "bt", exchange: "RUS", symbol: "BT1!" }]);
+  assert.equal(normalizeCharts([{ id: "other", exchange: "TEST", symbol: "BT" }])[0].symbol, "BT");
+});
+
+test("an explicit source ranks above matching fragments in other sources and symbols", () => {
+  const groups = prepare({ BINANCE: ["BTRUSDT"], EURONEXT: ["BTC"], LUNARCRUSH: ["BTC_ALTRANK"], RUS: ["BT1!", "BT2!"] });
+  assert.deepEqual(findMarkets(groups, "bt rus", 2).results, [
+    { exchange: "RUS", symbol: "BT1!" }, { exchange: "RUS", symbol: "BT2!" },
+  ]);
+});
+
 test("only confirmed restricted instruments are filtered, keeping other and historical series", () => {
   const catalogue = buildCatalogue([
     { exchange: "FINRA", symbol: "A4404722" },
