@@ -52,7 +52,7 @@ main.is-empty { display: block; overflow-y: auto; scrollbar-gutter: stable; }
 .welcome-search-form { margin: 1.5rem 0 1rem; text-align: left; }
 .welcome-search-form label { display: block; font-size: .8rem; margin-bottom: .5rem; }
 .welcome-search-controls { display: flex; gap: .5rem; }
-.welcome-search-controls input { box-sizing: border-box; flex: 1; min-width: 0; padding: .6rem .7rem; font-size: 16px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); }
+.welcome-search-controls input { box-sizing: border-box; flex: 1; min-width: 0; min-height: 44px; padding: .6rem .7rem; font-size: 16px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); }
 /* Keep the centred panel the same size through empty, loading and result states. */
 .welcome-content .welcome-search-status { display: flex; align-items: center; gap: .4rem; box-sizing: border-box; height: 3rem; font-size: .75rem; margin: .5rem 0; }
 .welcome-results { list-style: none; padding: 0; margin: 0; height: clamp(8.75rem, 32svh, 16rem); overflow-y: auto; scrollbar-gutter: stable; }

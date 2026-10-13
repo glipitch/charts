@@ -1,5 +1,5 @@
-import * as current from "../current-markets/current.mjs?v=865e3d4657b9";
-import { loadSvg } from "../utilities.mjs?v=865e3d4657b9";
+import * as current from "../current-markets/current.mjs?v=e698ad81464a";
+import { loadSvg } from "../utilities.mjs?v=e698ad81464a";
 
 const theme = document.querySelector(".theme");
 const choices = document.querySelectorAll('.theme-settings input[name="theme"]');
@@ -19,7 +19,7 @@ choices.forEach(choice => {
 
 // Keep the previous button working for a cached older page.
 if (theme) {
-  loadSvg(".theme", "svg/theme.svg?v=865e3d4657b9");
+  loadSvg(".theme", "svg/theme.svg?v=e698ad81464a");
   theme.addEventListener("click", event => {
     event.stopPropagation();
     applyTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");

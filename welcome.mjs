@@ -1,8 +1,8 @@
-import { createMarketSearch, loadAvailable } from "./available-markets/market-search.mjs?v=865e3d4657b9";
-import { addCurrentMarket, getCurrentMarkets } from "./current-markets/current.mjs?v=865e3d4657b9";
-import { setGrid } from "./dimensions.mjs?v=865e3d4657b9";
-import { open } from "./header/dialog.mjs?v=865e3d4657b9";
-import { searchFor } from "./available-markets/available.mjs?v=865e3d4657b9";
+import { createMarketSearch, loadAvailable } from "./available-markets/market-search.mjs?v=e698ad81464a";
+import { addCurrentMarket, getCurrentMarkets } from "./current-markets/current.mjs?v=e698ad81464a";
+import { setGrid } from "./dimensions.mjs?v=e698ad81464a";
+import { open } from "./header/dialog.mjs?v=e698ad81464a";
+import { searchFor } from "./available-markets/available.mjs?v=e698ad81464a";
 
 const form = document.querySelector(".welcome-search-form");
 const input = document.querySelector("#welcome-search");

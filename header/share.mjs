@@ -26,6 +26,7 @@ button?.addEventListener("click", async () => {
   const copied = await copyLayoutLink(url, navigator.clipboard);
   copying = false;
   button.disabled = !chartCount;
+  if (!chartCount) return;
   if (copied) {
     fallback.hidden = true;
     announce("Link copied");

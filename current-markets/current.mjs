@@ -1,9 +1,9 @@
-import * as constants from "../constants.mjs?v=865e3d4657b9";
-import * as dimensions from "../dimensions.mjs?v=865e3d4657b9";
-import * as urlState from "./url-state.mjs?v=865e3d4657b9";
-import * as widget from "./widget.mjs?v=865e3d4657b9";
-import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=865e3d4657b9";
-import * as utilities from "../utilities.mjs?v=865e3d4657b9";
+import * as constants from "../constants.mjs?v=e698ad81464a";
+import * as dimensions from "../dimensions.mjs?v=e698ad81464a";
+import * as urlState from "./url-state.mjs?v=e698ad81464a";
+import * as widget from "./widget.mjs?v=e698ad81464a";
+import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=e698ad81464a";
+import * as utilities from "../utilities.mjs?v=e698ad81464a";
 
 const table = document.querySelector(".current");
 const body = table.tBodies[0];
@@ -45,6 +45,7 @@ const updateMarketCount = () => {
   emptyState.style.display = n > 0 ? "none" : "";
   if (welcome) welcome.hidden = n > 0;
   main.classList.toggle("is-empty", !!welcome && n === 0);
+  main.classList.toggle("is-single", Math.min(n, capacity) === 1);
   window.dispatchEvent(new CustomEvent("chartschange", { detail: { count: n } }));
 };
 
@@ -121,8 +122,10 @@ const addChartToTable = item => {
   button.setAttribute("aria-label", `Remove ${item.symbol}`);
   button.appendChild(document.createTextNode(constants.HEAVY_MULTIPLICATION_X));
   button.addEventListener("click", () => {
+    const nextRow = row.nextElementSibling || row.previousElementSibling;
     removeCurrentMarket(item.id);
     row.remove();
+    (nextRow?.querySelector("button") || document.querySelector(".search"))?.focus({ preventScroll: true });
   }, { once: true });
   row.insertCell().appendChild(button);
 
