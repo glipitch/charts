@@ -1,21 +1,61 @@
-### charts
+# Charts
 
-The page declares `https://glipitch.github.io/charts/` as its canonical address. `front/sitemap.xml` lists that page for Search Console submission. A project-subfolder `robots.txt` would have no effect: crawling rules belong at `https://glipitch.github.io/robots.txt`, outside this project. The absent host-level file currently permits crawling.
+A lightweight dashboard for viewing multiple TradingView financial charts in one place. Choose markets, set their time intervals, and arrange them in a grid.
 
+**[Open Charts](https://glipitch.github.io/charts/)** · [Try a two-chart example](https://glipitch.github.io/charts/NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x1)
 
-View multiple financial charts at once
+## Features
 
+- Search markets by symbol and exchange, such as `btc binance` or `aapl nasdaq`.
+- Set the number of columns and rows, and reorder your charts.
+- Choose a separate time interval for each chart.
+- Switch between light and dark themes and adjust the settings panel's opacity.
+- Keep your selection in your browser and share a layout through its URL.
+- View charts in a scrolling column on phones while retaining your desktop grid.
 
-https://glipitch.github.io/charts
+## Getting started
 
-Shareable URLs can include charts in the path and an optional short grid query:
+1. Open settings using the chevron in the top-right corner, or press **Escape**.
+2. Search under **Available**, then select a market to add its chart.
+3. Set **Columns** and **Rows** to fit your selection. The grid displays up to columns × rows charts; increase its size to show more.
+4. Select a chart's interval under **Current** to cycle through the supported intervals. Drag a row to reorder it, or focus it and press **Alt + Up/Down**.
+5. Close settings using the chevron or **Escape** to view your charts.
 
-`https://glipitch.github.io/charts/NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x4`
+Use a chart's × button to remove it, or **Clear** to remove the whole selection. With a keyboard, use **Tab** to reach controls and **Enter** or **Space** to select an available market.
 
-Open settings with the rotating chevron or Escape. Set columns, rows and opacity at the top; click available markets to add charts, click an interval to cycle it, and drag Current rows to reorder charts.
+## Sharing a layout
 
-On phones, the same selected charts form a scrolling column without changing the saved desktop grid. Vertical touch drags scroll the page; horizontal chart dragging and pinch zoom remain available. Settings retain their original order, with larger touch targets and one scrolling page. Keyboard users can reorder a focused Current row with Alt + Up/Down.
+Copy the address bar after choosing your charts. The URL includes their order, intervals, and grid dimensions:
 
-Run `node back/serve.js` locally and `node --test` for checks. Edit `front/index.html`, then run `node back/build.js` to generate the matching GitHub Pages fallback and a versioned release in `dist`. Deployment builds and tests the release, runs on frontend changes, and follows successful catalogue refreshes. Versioned asset URLs keep older cached scripts from mixing with a new page.
+```text
+https://glipitch.github.io/charts/NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x1
+```
 
-Market search runs in a worker. Catalogue refreshes preserve the previous file on request failures or a drop greater than 25% in market count. When a search remains capped after subdivision, the refresh retains that exchange's previously saved markets with a workflow warning and updates the other exchanges. A capped exchange without valid saved data still stops publication.
+This example shows Apple on a one-hour interval and Bitcoin/Tether on a four-hour interval, in two columns and one row. The path uses `EXCHANGE:SYMBOL[:INTERVAL]`; omitting the interval selects one hour. The optional `g=COLSxROWS` query sets the grid size.
+
+Your browser remembers charts, grid dimensions, theme, search, and panel opacity. A shared URL supplies the charts and grid; theme and opacity stay local to each browser.
+
+## Running locally
+
+Install [Node.js](https://nodejs.org/), then run these commands from the repository directory. No package installation is needed.
+
+```sh
+node back/serve.js
+```
+
+Open [localhost:3000](http://localhost:3000/). Chart widgets require access to TradingView over the internet.
+
+```sh
+node --test
+node back/build.js
+```
+
+The build writes a deployable site to `dist/`. See the [maintenance guide](docs/maintenance.md) for deployment, market catalogue refreshes, and search indexing.
+
+## Chart data
+
+Charts are embedded TradingView widgets. Market availability and data delays depend on TradingView and the exchange. The searchable market catalogue is refreshed separately from chart prices.
+
+## License
+
+[MIT](LICENSE).
