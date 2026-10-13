@@ -1,9 +1,9 @@
-import * as constants from "../constants.mjs?v=4f5e1c356323";
-import * as dimensions from "../dimensions.mjs?v=4f5e1c356323";
-import * as urlState from "./url-state.mjs?v=4f5e1c356323";
-import * as widget from "./widget.mjs?v=4f5e1c356323";
-import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState } from "./state.mjs?v=4f5e1c356323";
-import * as utilities from "../utilities.mjs?v=4f5e1c356323";
+import * as constants from "../constants.mjs?v=2eeebaa694f4";
+import * as dimensions from "../dimensions.mjs?v=2eeebaa694f4";
+import * as urlState from "./url-state.mjs?v=2eeebaa694f4";
+import * as widget from "./widget.mjs?v=2eeebaa694f4";
+import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=2eeebaa694f4";
+import * as utilities from "../utilities.mjs?v=2eeebaa694f4";
 
 const table = document.querySelector(".current");
 const body = table.tBodies[0];
@@ -14,8 +14,6 @@ const syncCharts = () => {
   const compact = window.innerWidth <= 600 || (window.innerWidth <= 1000 && window.innerHeight <= 500);
   widget.sync(charts.slice(0, x * y), compact);
 };
-
-const INTERVALS = Object.keys(INTERVAL_LABELS);
 
 let charts = [];
 let draggedRow = null;
@@ -119,8 +117,9 @@ const addChartToTable = item => {
   intervalButton.setAttribute("aria-label", `Change interval for ${item.symbol}`);
   intervalCell.replaceChildren(intervalButton);
   intervalCell.addEventListener("click", () => {
-    const idx = INTERVALS.indexOf(item.interval);
-    item.interval = INTERVALS[(idx + 1) % INTERVALS.length];
+    const intervals = supportedIntervals(item);
+    const idx = intervals.indexOf(item.interval);
+    item.interval = intervals[(idx + 1) % intervals.length];
     intervalButton.textContent = displayInterval(item.interval);
     saveCharts();
     refreshWidget(item);
@@ -137,9 +136,31 @@ const addChart = item => {
   syncCharts();
 };
 
-export const addCurrentMarket = (exchange, symbol) => {
-  const [item] = normalizeCharts([{ exchange, symbol, interval: "60" }]);
+export const addCurrentMarket = (exchange, symbol, daily = false) => {
+  const [item] = normalizeCharts([{ exchange, symbol, daily, interval: "60" }]);
   if (item) addChart(item);
+};
+
+export const getCurrentMarkets = () => charts.map(chart => ({ ...chart }));
+
+// Saved daily flags survive reloads; shared links get fresh metadata once the
+// catalogue is ready. Update only charts still present, preserving user edits.
+export const applyMarketMetadata = resolved => {
+  let changed = false;
+  for (const market of resolved) {
+    const chart = chartById(market.id);
+    if (!chart || chart.symbol !== market.symbol) continue;
+    const [next] = normalizeCharts([{ ...chart, exchange: market.exchange, daily: chart.daily || market.daily }]);
+    if (chart.exchange === next.exchange && chart.interval === next.interval && chart.daily === next.daily) continue;
+    Object.assign(chart, next);
+    const row = document.getElementById("row_" + chart.id);
+    if (row) {
+      row.cells[0].textContent = chart.exchange;
+      row.cells[2].querySelector("button").textContent = displayInterval(chart.interval);
+    }
+    changed = true;
+  }
+  if (changed) { saveCharts(); syncCharts(); }
 };
 
 export const loadCurrentMarkets = () => {

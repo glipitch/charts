@@ -1,3 +1,5 @@
+import { isWidgetRestricted } from "../market-rules.mjs?v=2eeebaa694f4";
+
 const main = document.querySelector("main");
 const entries = new Map();
 let ready;
@@ -32,6 +34,18 @@ const observer = typeof IntersectionObserver === "function" ? new IntersectionOb
 const start = async entry => {
   if (entry.started) return;
   entry.started = true;
+  if (isWidgetRestricted(entry.chart.exchange, entry.chart.symbol)) {
+    entry.container.classList.add("chart-unavailable");
+    const message = document.createElement("p");
+    message.textContent = `${entry.chart.symbol} data is unavailable in embedded charts.`;
+    const link = document.createElement("a");
+    link.textContent = "View on TradingView";
+    link.href = `https://www.tradingview.com/chart/?symbol=${encodeURIComponent(`${entry.chart.exchange}:${entry.chart.symbol}`)}`;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    entry.container.replaceChildren(message, link);
+    return;
+  }
   entry.container.textContent = `Loading ${entry.chart.symbol}…`;
   try {
     const TradingView = await loadTradingView();
@@ -82,7 +96,7 @@ export const sync = (charts, lazy = false) => {
   let previous = main.querySelector(".chart-empty");
   charts.forEach(chart => {
     let entry = entries.get(chart.id);
-    if (entry && entry.chart.interval !== chart.interval) { remove(chart.id); entry = undefined; }
+    if (entry && ["exchange", "symbol", "interval"].some(key => entry.chart[key] !== chart[key])) { remove(chart.id); entry = undefined; }
     if (entry && entry.scrollPage !== lazy) {
       if (entry.started) { remove(chart.id); entry = undefined; }
       else entry.scrollPage = lazy;

@@ -1,4 +1,4 @@
-import { addRow, debounce } from "../utilities.mjs?v=4f5e1c356323";
+import { addRow, debounce } from "../utilities.mjs?v=2eeebaa694f4";
 
 const available = document.querySelector(".available");
 const body = available.tBodies[0];
@@ -6,6 +6,13 @@ const search = document.querySelector(".search");
 const status = document.querySelector(".search-status");
 let worker;
 let requestId = 0;
+let getCurrentCharts = () => [];
+let applyCurrentMetadata = () => {};
+
+export const subscribeCurrent = (getCharts, applyMetadata) => {
+  getCurrentCharts = getCharts;
+  applyCurrentMetadata = applyMetadata;
+};
 
 const clearResults = () => { body.replaceChildren(); status.textContent = ""; };
 const showMessage = message => {
@@ -41,18 +48,24 @@ export const loadAvailable = () => {
   clearResults();
   showMessage("loading...");
   try {
-    worker = new Worker(new URL("search-worker.mjs?v=4f5e1c356323", import.meta.url), { type: "module" });
+    worker = new Worker(new URL("search-worker.mjs?v=2eeebaa694f4", import.meta.url), { type: "module" });
     const currentWorker = worker;
     worker.addEventListener("error", () => { if (worker === currentWorker) showError(); });
     worker.addEventListener("message", ({ data }) => {
       if (worker !== currentWorker) return;
       if (data.type === "error") { showError(); return; }
-      if (data.type === "ready") { runSearch(); return; }
+      if (data.type === "ready") {
+        worker.postMessage({ type: "resolve", charts: getCurrentCharts() });
+        runSearch();
+        return;
+      }
+      if (data.type === "resolved") { applyCurrentMetadata(data.charts); return; }
       if (data.id !== requestId) return;
       clearResults();
       data.results.forEach(market => {
         const row = addRow(available, [market.exchange, market.symbol]);
         row.dataset.market = "true";
+        if (market.daily) row.dataset.daily = "true";
         row.tabIndex = 0;
       });
       status.textContent = `${data.total.toLocaleString()} matching markets`;
@@ -68,7 +81,7 @@ export const subscribe = callback => {
     const row = event.target.closest("tr[data-market]");
     if (!row) return;
     if (event.type === "keydown") event.preventDefault();
-    callback(row.cells[0].textContent, row.cells[1].textContent);
+    callback(row.cells[0].textContent, row.cells[1].textContent, row.dataset.daily === "true");
     row.classList.add("just-added");
     row.addEventListener("animationend", () => row.classList.remove("just-added"), { once: true });
   };
