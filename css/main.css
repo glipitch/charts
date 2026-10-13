@@ -32,3 +32,30 @@ main>div {
 }
 
 .chart-unavailable a { color: var(--opacity-color); }
+
+.chart-empty {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 100%;
+    padding: 4rem 1.25rem 2rem;
+    text-align: center;
+}
+.welcome-content { width: min(100%, 28rem); }
+main.is-empty { display: block; overflow-y: auto; }
+:root[data-current="visible"] .chart-empty { visibility: hidden; }
+.welcome-content h1 { font-size: clamp(1.5rem, 5vw, 2rem); margin: 0 0 .75rem; font-weight: 500; }
+.welcome-content p { color: var(--dialog-label); font-size: .9rem; line-height: 1.6; }
+.welcome-search-form { margin: 1.5rem 0 1rem; text-align: left; }
+.welcome-search-form label { display: block; font-size: .8rem; margin-bottom: .5rem; }
+.welcome-search-controls { display: flex; gap: .5rem; }
+.welcome-search-controls input { box-sizing: border-box; flex: 1; min-width: 0; padding: .6rem .7rem; font-size: 16px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); }
+.welcome-search-controls button { padding: .6rem .8rem; min-height: 44px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); font: inherit; font-size: .8rem; cursor: pointer; }
+.example-layout { display: inline-block; padding: .5rem; color: var(--opacity-color); font-size: .85rem; }
+.welcome-content .welcome-hint { font-size: .75rem; margin-top: 1.25rem; }
+@media (max-width: 400px) {
+    .welcome-search-controls { flex-direction: column; }
+}

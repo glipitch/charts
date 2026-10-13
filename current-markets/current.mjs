@@ -1,18 +1,22 @@
-import * as constants from "../constants.mjs?v=2eeebaa694f4";
-import * as dimensions from "../dimensions.mjs?v=2eeebaa694f4";
-import * as urlState from "./url-state.mjs?v=2eeebaa694f4";
-import * as widget from "./widget.mjs?v=2eeebaa694f4";
-import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=2eeebaa694f4";
-import * as utilities from "../utilities.mjs?v=2eeebaa694f4";
+import * as constants from "../constants.mjs?v=61a7eebadd5c";
+import * as dimensions from "../dimensions.mjs?v=61a7eebadd5c";
+import * as urlState from "./url-state.mjs?v=61a7eebadd5c";
+import * as widget from "./widget.mjs?v=61a7eebadd5c";
+import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=61a7eebadd5c";
+import * as utilities from "../utilities.mjs?v=61a7eebadd5c";
 
 const table = document.querySelector(".current");
 const body = table.tBodies[0];
 const marketCount = document.querySelector(".market-count");
 const emptyState = document.querySelector(".empty-state");
+const fitAll = document.querySelector(".fit-all");
+const welcome = document.querySelector(".chart-empty");
+const main = document.querySelector("main");
 const syncCharts = () => {
   const { x, y } = dimensions.getGrid();
   const compact = window.innerWidth <= 600 || (window.innerWidth <= 1000 && window.innerHeight <= 500);
   widget.sync(charts.slice(0, x * y), compact);
+  updateMarketCount();
 };
 
 let charts = [];
@@ -28,8 +32,20 @@ const saveCharts = () => {
 
 const updateMarketCount = () => {
   const n = charts.length;
-  marketCount.textContent = n > 0 ? `(${n})` : "";
+  const { x, y } = dimensions.getGrid();
+  const capacity = x * y;
+  const countText = n > capacity ? `${capacity} of ${n} shown` : n > 0 ? `(${n})` : "";
+  if (marketCount.textContent !== countText) marketCount.textContent = countText;
+  marketCount.title = `${x} columns × ${y} rows`;
+  if (fitAll) {
+    fitAll.hidden = n <= capacity;
+    fitAll.disabled = n > constants.MAX_DIMENSION ** 2;
+    fitAll.title = fitAll.disabled ? `Maximum grid size is ${constants.MAX_DIMENSION ** 2} charts` : "Expand the grid to show every chart";
+  }
   emptyState.style.display = n > 0 ? "none" : "";
+  if (welcome) welcome.hidden = n > 0;
+  main.classList.toggle("is-empty", !!welcome && n === 0);
+  window.dispatchEvent(new CustomEvent("chartschange", { detail: { count: n } }));
 };
 
 const reorderChartsFromTable = () => {
@@ -46,6 +62,7 @@ const enableDragReorder = row => {
   row.title = "Drag to reorder, or use Alt + ↑ / ↓";
   row.setAttribute("aria-keyshortcuts", "Alt+ArrowUp Alt+ArrowDown");
   row.addEventListener("keydown", event => {
+    if (event.target !== row) return;
     if (!event.altKey || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
     const target = event.key === "ArrowUp" ? row.previousElementSibling : row.nextElementSibling;
     if (!target) return;
@@ -94,7 +111,6 @@ const removeCurrentMarket = id => {
   widget.remove(id);
   saveCharts();
   syncCharts();
-  updateMarketCount();
 };
 
 const addChartToTable = item => {
@@ -111,22 +127,29 @@ const addChartToTable = item => {
   row.insertCell().appendChild(button);
 
   const intervalCell = row.cells[2];
-  const intervalButton = document.createElement("button");
-  intervalButton.className = "interval";
-  intervalButton.textContent = displayInterval(item.interval);
-  intervalButton.setAttribute("aria-label", `Change interval for ${item.symbol}`);
-  intervalCell.replaceChildren(intervalButton);
-  intervalCell.addEventListener("click", () => {
-    const intervals = supportedIntervals(item);
-    const idx = intervals.indexOf(item.interval);
-    item.interval = intervals[(idx + 1) % intervals.length];
-    intervalButton.textContent = displayInterval(item.interval);
+  const intervalSelect = document.createElement("select");
+  intervalSelect.className = "interval";
+  intervalSelect.setAttribute("aria-label", `Interval for ${item.symbol}`);
+  renderIntervalOptions(intervalSelect, item);
+  intervalCell.replaceChildren(intervalSelect);
+  intervalSelect.addEventListener("change", () => {
+    if (!supportedIntervals(item).includes(intervalSelect.value)) return;
+    item.interval = intervalSelect.value;
     saveCharts();
     refreshWidget(item);
   });
 
   enableDragReorder(row);
-  updateMarketCount();
+};
+
+const renderIntervalOptions = (select, item) => {
+  select.replaceChildren(...supportedIntervals(item).map(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = displayInterval(value);
+    return option;
+  }));
+  select.value = item.interval;
 };
 
 const addChart = item => {
@@ -156,7 +179,7 @@ export const applyMarketMetadata = resolved => {
     const row = document.getElementById("row_" + chart.id);
     if (row) {
       row.cells[0].textContent = chart.exchange;
-      row.cells[2].querySelector("button").textContent = displayInterval(chart.interval);
+      renderIntervalOptions(row.cells[2].querySelector("select"), chart);
     }
     changed = true;
   }
@@ -193,10 +216,14 @@ const clearCurrentMarkets = () => {
   });
   charts = [];
   saveCharts();
-  updateMarketCount();
+  syncCharts();
 };
 
 document.querySelector(".clear").addEventListener("click", () => clearCurrentMarkets());
+fitAll?.addEventListener("click", () => {
+  const grid = dimensions.getReasonableGrid(charts.length);
+  dimensions.setGrid(grid.x, grid.y);
+});
 window.addEventListener("gridchange", () => {
   syncCharts();
   urlState.update(charts);

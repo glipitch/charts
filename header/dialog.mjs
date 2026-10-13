@@ -1,4 +1,4 @@
-import { loadSvg } from "../utilities.mjs?v=2eeebaa694f4";
+import { loadSvg } from "../utilities.mjs?v=61a7eebadd5c";
 
 const dialog = document.querySelector("dialog");
 const chevron = document.querySelector(".dialog-visibility");
@@ -12,7 +12,8 @@ const setCurrentVisibility = value => {
 const close = () => {
   setCurrentVisibility("hidden");
   dialog.close();
-  if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+  const target = previousFocus?.isConnected && previousFocus.getClientRects().length ? previousFocus : chevron;
+  target.focus({ preventScroll: true });
 };
 
 const toggle = () => {
@@ -47,4 +48,4 @@ window.visualViewport?.addEventListener("resize", sizeWindow);
 window.addEventListener("resize", sizeWindow);
 sizeWindow();
 
-loadSvg(".dialog-visibility", "svg/chevron.svg?v=2eeebaa694f4");
+loadSvg(".dialog-visibility", "svg/chevron.svg?v=61a7eebadd5c");

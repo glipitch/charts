@@ -1,4 +1,4 @@
-import { addRow, debounce } from "../utilities.mjs?v=2eeebaa694f4";
+import { addRow, debounce } from "../utilities.mjs?v=61a7eebadd5c";
 
 const available = document.querySelector(".available");
 const body = available.tBodies[0];
@@ -48,7 +48,7 @@ export const loadAvailable = () => {
   clearResults();
   showMessage("loading...");
   try {
-    worker = new Worker(new URL("search-worker.mjs?v=2eeebaa694f4", import.meta.url), { type: "module" });
+    worker = new Worker(new URL("search-worker.mjs?v=61a7eebadd5c", import.meta.url), { type: "module" });
     const currentWorker = worker;
     worker.addEventListener("error", () => { if (worker === currentWorker) showError(); });
     worker.addEventListener("message", ({ data }) => {
@@ -100,3 +100,8 @@ search.addEventListener("input", () => {
   }
   localStorage.setItem("search", search.value);
 });
+
+export const searchFor = query => {
+  search.value = query;
+  search.dispatchEvent(new Event("input", { bubbles: true }));
+};
