@@ -1,9 +1,9 @@
-import * as constants from "../constants.mjs?v=e3a2a6ceab3c";
-import * as dimensions from "../dimensions.mjs?v=e3a2a6ceab3c";
-import * as urlState from "./url-state.mjs?v=e3a2a6ceab3c";
-import * as widget from "./widget.mjs?v=e3a2a6ceab3c";
-import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=e3a2a6ceab3c";
-import * as utilities from "../utilities.mjs?v=e3a2a6ceab3c";
+import * as constants from "../constants.mjs?v=865e3d4657b9";
+import * as dimensions from "../dimensions.mjs?v=865e3d4657b9";
+import * as urlState from "./url-state.mjs?v=865e3d4657b9";
+import * as widget from "./widget.mjs?v=865e3d4657b9";
+import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=865e3d4657b9";
+import * as utilities from "../utilities.mjs?v=865e3d4657b9";
 
 const table = document.querySelector(".current");
 const body = table.tBodies[0];
