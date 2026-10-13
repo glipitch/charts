@@ -33,6 +33,16 @@ test("futures families expand to actual contracts with their own source IDs", ()
   assert.throws(() => buildCatalogue([{ exchange: "RUS", symbol: "BT", contracts: [null] }]), /Invalid futures contract/);
 });
 
+test("a futures family does not replace a spot market or stock with the same source and name", () => {
+  const catalogue = buildCatalogue([
+    { exchange: "BINANCE", symbol: "BTCUSDT", type: "spot" },
+    { exchange: "BINANCE", symbol: "BTCUSDT", type: "futures", contracts: [{ symbol: "BTCUSDT25Z2026" }] },
+    { exchange: "EURONEXT", symbol: "AIR", type: "stock" },
+    { exchange: "EURONEXT", symbol: "AIR", type: "futures", contracts: [{ symbol: "AIR1!" }] },
+  ]);
+  assert.deepEqual(catalogue, { BINANCE: ["BTCUSDT", "BTCUSDT25Z2026"], EURONEXT: ["AIR", "AIR1!"] });
+});
+
 test("the verified BT family migrates in old links, saved charts and cached catalogues", () => {
   const [chart] = normalizeCharts([{ id: "bt", exchange: "RUS", symbol: "BT", interval: "240" }]);
   assert.deepEqual(chart, { id: "bt", exchange: "RUS", symbol: "BT1!", interval: "240" });

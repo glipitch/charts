@@ -70,3 +70,18 @@ test('Share also works without a Clipboard API and disables sharing after cleari
   await click();
   assert.equal(controls['.share-fallback'].hidden, true);
 });
+
+for (const succeeds of [true, false]) {
+  test(`clearing a layout during a pending ${succeeds ? 'successful' : 'denied'} copy keeps sharing closed`, async t => {
+    let finish;
+    const { controls, count, click } = await setup(t, { writeText() { return new Promise((resolve, reject) => {
+      finish = () => succeeds ? resolve() : reject(new Error('denied'));
+    }); } });
+    const pending = click();
+    count(0);
+    finish(); await pending;
+    assert.equal(controls['.share'].disabled, true);
+    assert.equal(controls['.share-status'].textContent, '');
+    assert.equal(controls['.share-fallback'].hidden, true);
+  });
+}

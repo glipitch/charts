@@ -17,7 +17,8 @@ permissions:
 
 concurrency:
   group: fetch-tv-data
-  cancel-in-progress: false
+  # A superseded run may retain an older catalogue for capped sources.
+  cancel-in-progress: true
 
 jobs:
   fetch-tv-data:

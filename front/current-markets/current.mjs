@@ -45,6 +45,7 @@ const updateMarketCount = () => {
   emptyState.style.display = n > 0 ? "none" : "";
   if (welcome) welcome.hidden = n > 0;
   main.classList.toggle("is-empty", !!welcome && n === 0);
+  main.classList.toggle("is-single", Math.min(n, capacity) === 1);
   window.dispatchEvent(new CustomEvent("chartschange", { detail: { count: n } }));
 };
 
@@ -121,8 +122,10 @@ const addChartToTable = item => {
   button.setAttribute("aria-label", `Remove ${item.symbol}`);
   button.appendChild(document.createTextNode(constants.HEAVY_MULTIPLICATION_X));
   button.addEventListener("click", () => {
+    const nextRow = row.nextElementSibling || row.previousElementSibling;
     removeCurrentMarket(item.id);
     row.remove();
+    (nextRow?.querySelector("button") || document.querySelector(".search"))?.focus({ preventScroll: true });
   }, { once: true });
   row.insertCell().appendChild(button);
 

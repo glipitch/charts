@@ -74,3 +74,11 @@ test('published market data contains no highlighting or duplicate symbols', () =
     assert.equal(new Set(names).size, names.length, exchange);
   }
 });
+
+test('the published catalogue keeps ordinary markets alongside matching futures families', () => {
+  const data = JSON.parse(readFileSync(new URL('../front/available-markets/data.json', import.meta.url), 'utf8'));
+  for (const [source, symbol] of [['BINANCE', 'BTCUSDT'], ['BINANCE', 'ETHUSDT'], ['EURONEXT', 'AIR'], ['BET', 'OTP']]) {
+    assert.ok(data[source].some(entry => catalogue.readMarket(entry).symbol === symbol), `${source}:${symbol}`);
+  }
+  assert.ok(data.BINANCE.some(entry => catalogue.readMarket(entry).symbol === 'BTCUSDT25Z2026'));
+});
