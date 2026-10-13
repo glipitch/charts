@@ -21,6 +21,19 @@
 .theme-settings input { margin: 0; accent-color: var(--opacity-color); }
 .settings-source { color: var(--dialog-label); font-size: .75rem; padding: .75rem; margin-top: .5rem; }
 .settings-source:hover { color: var(--highlight-color); }
+.market-search-hint, .settings-return-hint {
+    box-sizing: border-box;
+    width: calc(100% - 1rem);
+    max-width: 24rem;
+    margin: 0 0 .6rem;
+    font-size: .75rem;
+    line-height: 1.6;
+    color: var(--dialog-label);
+}
+.market-search-hint { scroll-margin-top: 4rem; }
+.settings-return-hint { margin-top: .25rem; }
+kbd { font: inherit; font-weight: bold; }
+@media (pointer: coarse) { .keyboard-shortcut { display: none; } }
 
 .grid-settings {
     display: flex;

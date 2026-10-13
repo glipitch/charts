@@ -49,21 +49,6 @@ main.is-empty { display: block; overflow-y: auto; scrollbar-gutter: stable; }
 :root[data-current="visible"] .chart-empty { visibility: hidden; }
 .welcome-content h1 { font-size: clamp(1.5rem, 5vw, 2rem); margin: 0 0 .75rem; font-weight: 500; }
 .welcome-content p { color: var(--dialog-label); font-size: .9rem; line-height: 1.6; }
-.welcome-search-form { margin: 1.5rem 0 1rem; text-align: left; }
-.welcome-search-form label { display: block; font-size: .8rem; margin-bottom: .5rem; }
-.welcome-search-controls { display: flex; gap: .5rem; }
-.welcome-search-controls input { box-sizing: border-box; flex: 1; min-width: 0; min-height: 44px; padding: .6rem .7rem; font-size: 16px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); }
-/* Keep the centred panel the same size through empty, loading and result states. */
-.welcome-content .welcome-search-status { display: flex; align-items: center; gap: .4rem; box-sizing: border-box; height: 3rem; font-size: .75rem; margin: .5rem 0; }
-.welcome-results { list-style: none; padding: 0; margin: 0; height: clamp(8.75rem, 32svh, 16rem); overflow-y: auto; scrollbar-gutter: stable; }
-.welcome-results button { display: flex; gap: .75rem; align-items: center; box-sizing: border-box; width: 100%; padding: .6rem .7rem; min-height: 44px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); font: inherit; font-size: .8rem; cursor: pointer; text-align: left; }
-.welcome-results li + li { margin-top: .25rem; }
-.welcome-results button span:first-child { flex: 0 0 35%; color: var(--dialog-label); }
-.welcome-results button span { overflow-wrap: anywhere; min-width: 0; }
-.welcome-results button:hover { border-color: var(--opacity-color); }
-.welcome-search-status button { color: var(--opacity-color); background: none; border: 1px solid var(--border-color); border-radius: .25rem; min-height: 44px; cursor: pointer; }
+.welcome-chevron { width: 1rem; height: 1rem; fill: var(--highlight-color); vertical-align: middle; }
 .example-layout { display: inline-block; padding: .5rem; color: var(--opacity-color); font-size: .85rem; }
 .welcome-content .welcome-hint { font-size: .75rem; margin-top: 1.25rem; }
-@media (max-width: 400px) {
-    .welcome-search-controls { flex-direction: column; }
-}

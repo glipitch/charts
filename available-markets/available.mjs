@@ -1,6 +1,6 @@
-import { addRow } from "../utilities.mjs?v=7d0691b8c6f8";
-import { createMarketSearch, loadAvailable } from "./market-search.mjs?v=7d0691b8c6f8";
-export { loadAvailable, subscribeCurrent } from "./market-search.mjs?v=7d0691b8c6f8";
+import { addRow } from "../utilities.mjs?v=0433dce4f8d8";
+import { createMarketSearch, loadAvailable } from "./market-search.mjs?v=0433dce4f8d8";
+export { loadAvailable, subscribeCurrent } from "./market-search.mjs?v=0433dce4f8d8";
 
 const available = document.querySelector(".available");
 const body = available.tBodies[0];
@@ -20,6 +20,7 @@ const showMessage = message => {
 };
 const runSearch = createMarketSearch(data => {
   clearResults();
+  search.setAttribute("aria-busy", String(data.type === "loading" && !!search.value.trim()));
   if (data.type === "clear") return;
   if (data.type === "loading") { showMessage("Searching…"); return; }
   if (data.type === "error") {
@@ -60,6 +61,22 @@ if (search.value.trim()) runSearch(search.value);
 search.addEventListener("input", () => {
   runSearch(search.value);
   localStorage.setItem("search", search.value);
+});
+search.addEventListener("keydown", event => {
+  if (event.key !== "ArrowDown") return;
+  const first = body.querySelector("tr[data-market]");
+  if (!first) return;
+  event.preventDefault();
+  first.focus();
+});
+available.addEventListener("keydown", event => {
+  if (!["ArrowUp", "ArrowDown"].includes(event.key)) return;
+  const rows = [...body.querySelectorAll("tr[data-market]")];
+  const index = rows.indexOf(event.target);
+  if (index < 0) return;
+  event.preventDefault();
+  if (event.key === "ArrowUp") (rows[index - 1] || search).focus();
+  else (rows[index + 1] || rows[index]).focus();
 });
 
 export const searchFor = query => {

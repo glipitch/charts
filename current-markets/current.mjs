@@ -1,9 +1,9 @@
-import * as constants from "../constants.mjs?v=7d0691b8c6f8";
-import * as dimensions from "../dimensions.mjs?v=7d0691b8c6f8";
-import * as urlState from "./url-state.mjs?v=7d0691b8c6f8";
-import * as widget from "./widget.mjs?v=7d0691b8c6f8";
-import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=7d0691b8c6f8";
-import * as utilities from "../utilities.mjs?v=7d0691b8c6f8";
+import * as constants from "../constants.mjs?v=0433dce4f8d8";
+import * as dimensions from "../dimensions.mjs?v=0433dce4f8d8";
+import * as urlState from "./url-state.mjs?v=0433dce4f8d8";
+import * as widget from "./widget.mjs?v=0433dce4f8d8";
+import { INTERVALS as INTERVAL_LABELS, normalizeCharts, readSavedState, supportedIntervals } from "./state.mjs?v=0433dce4f8d8";
+import * as utilities from "../utilities.mjs?v=0433dce4f8d8";
 
 const table = document.querySelector(".current");
 const body = table.tBodies[0];
@@ -198,6 +198,9 @@ export const loadCurrentMarkets = () => {
     localStorage.setItem("charts", JSON.stringify(charts));
   } else {
     charts = readSavedState().charts;
+    // Start an empty dashboard with one full-size chart. Users can then choose
+    // a different grid in settings before selecting their first market.
+    if (!charts.length) dimensions.setGrid(1, 1, false);
   }
 
   urlState.update(charts);

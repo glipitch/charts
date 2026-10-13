@@ -23,6 +23,12 @@
     margin-bottom: 0.75rem;
     box-shadow: var(--shadow);
 }
+/* Keep the first visit focused on Available instead of an empty chart table. */
+body:has(main.is-empty) .current-header,
+body:has(main.is-empty) .current-scroll,
+body:has(main.is-empty) .empty-state,
+body:has(main.is-empty) .clear,
+body:has(main.is-empty) .clear + .divider { display: none; }
 table { color: var(--highlight-color); border-collapse: collapse; }
 .interval { background: var(--dialog-background); border: 1px solid var(--border-color); border-radius: .2rem; padding: .15rem .3rem; color: inherit; font: inherit; cursor: pointer; min-width: 4rem; max-width: 100%; }
 .current td:nth-child(3) { width: 4.5rem; }
