@@ -1,7 +1,7 @@
-import { createMarketSearch, loadAvailable } from "./available-markets/market-search.mjs?v=fba6b13b20ea";
-import { addCurrentMarket } from "./current-markets/current.mjs?v=fba6b13b20ea";
-import { open } from "./header/dialog.mjs?v=fba6b13b20ea";
-import { searchFor } from "./available-markets/available.mjs?v=fba6b13b20ea";
+import { createMarketSearch, loadAvailable } from "./available-markets/market-search.mjs?v=e3a2a6ceab3c";
+import { addCurrentMarket } from "./current-markets/current.mjs?v=e3a2a6ceab3c";
+import { open } from "./header/dialog.mjs?v=e3a2a6ceab3c";
+import { searchFor } from "./available-markets/available.mjs?v=e3a2a6ceab3c";
 
 const form = document.querySelector(".welcome-search-form");
 const input = document.querySelector("#welcome-search");

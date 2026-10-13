@@ -1,5 +1,5 @@
-import { getNewId } from "../utilities.mjs?v=fba6b13b20ea";
-import { canonicalExchange, isDailyOnly } from "../market-rules.mjs?v=fba6b13b20ea";
+import { getNewId } from "../utilities.mjs?v=e3a2a6ceab3c";
+import { canonicalExchange, canonicalSymbol, isDailyOnly } from "../market-rules.mjs?v=e3a2a6ceab3c";
 
 export const INTERVALS = { "1": "1m", "5": "5m", "15": "15m", "30": "30m", "60": "1h", "240": "4h", D: "1D", W: "1W", M: "1M" };
 export const cleanSymbol = value => typeof value === "string" ? value.replace(/<\/?em>/gi, "").trim() : "";
@@ -10,8 +10,9 @@ export const normalizeCharts = items => {
   const ids = new Set();
   return (Array.isArray(items) ? items : []).flatMap(item => {
     if (!item || typeof item.exchange !== "string") return [];
-    const symbol = cleanSymbol(item.symbol);
-    const exchange = canonicalExchange(item.exchange.trim(), symbol);
+    const cleaned = cleanSymbol(item.symbol);
+    const exchange = canonicalExchange(item.exchange.trim(), cleaned);
+    const symbol = canonicalSymbol(exchange, cleaned);
     if (!exchange || !symbol) return [];
     const id = typeof item.id === "string" && /^[a-z\d_-]+$/i.test(item.id) && !ids.has(item.id) ? item.id : getNewId();
     ids.add(id);

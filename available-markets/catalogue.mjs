@@ -1,4 +1,4 @@
-import { canonicalExchange, isDailyOnly, isWidgetRestricted } from "../market-rules.mjs?v=fba6b13b20ea";
+import { canonicalExchange, canonicalSymbol, isDailyOnly, isWidgetRestricted } from "../market-rules.mjs?v=e3a2a6ceab3c";
 
 // Ordinary symbols stay strings. A [symbol, "D"] entry carries an EOD flag
 // without a second download or a separate copy of the symbol catalogue.
@@ -13,24 +13,38 @@ export const readMarket = entry => {
 
 export const normalizeMarket = item => {
   if (typeof item?.symbol !== "string" || typeof item.exchange !== "string") throw new Error("Invalid market in response");
-  const symbol = item.symbol.replace(/<\/?em>/gi, "").trim();
+  const cleaned = item.symbol.replace(/<\/?em>/gi, "").trim();
   const source = item.prefix || item.source_id || item.exchange;
-  if (typeof source !== "string" || !source.trim() || !symbol || !item.exchange.trim()) throw new Error("Invalid market in response");
-  const exchange = canonicalExchange(source.trim(), symbol);
+  if (typeof source !== "string" || !source.trim() || !cleaned || !item.exchange.trim()) throw new Error("Invalid market in response");
+  const exchange = canonicalExchange(source.trim(), cleaned);
+  const symbol = canonicalSymbol(exchange, cleaned);
   const daily = item.daily === true || item.params?.includes("eod") || isDailyOnly(exchange, symbol);
   return { exchange, symbol, ...(daily ? { daily: true } : {}) };
+};
+
+export const expandMarket = record => {
+  const market = normalizeMarket(record);
+  if (record.contracts === undefined) return [market];
+  if (!Array.isArray(record.contracts)) throw new Error("Invalid futures contracts in response");
+  return record.contracts.map(contract => {
+    if (!contract || typeof contract.symbol !== "string") throw new Error("Invalid futures contract in response");
+    return normalizeMarket({ ...record, ...contract,
+      prefix: contract.prefix || contract.source_id || record.prefix || record.source_id,
+    });
+  });
 };
 
 export const buildCatalogue = records => {
   const sources = new Map();
   for (const record of records) {
-    const item = normalizeMarket(record);
-    if (isWidgetRestricted(item.exchange, item.symbol)) continue;
-    if (!sources.has(item.exchange)) sources.set(item.exchange, new Map());
-    const symbols = sources.get(item.exchange);
-    // Some searches return the same instrument more than once. Preserve EOD
-    // information from either response instead of letting the first win.
-    symbols.set(item.symbol, symbols.get(item.symbol) === true || item.daily === true);
+    for (const item of expandMarket(record)) {
+      if (isWidgetRestricted(item.exchange, item.symbol)) continue;
+      if (!sources.has(item.exchange)) sources.set(item.exchange, new Map());
+      const symbols = sources.get(item.exchange);
+      // Some searches return the same instrument more than once. Preserve EOD
+      // information from either response instead of letting the first win.
+      symbols.set(item.symbol, symbols.get(item.symbol) === true || item.daily === true);
+    }
   }
   return Object.fromEntries([...sources].sort(([a], [b]) => a.localeCompare(b)).map(([exchange, entries]) => [exchange,
     [...entries].sort(([a], [b]) => a.localeCompare(b))

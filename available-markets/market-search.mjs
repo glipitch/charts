@@ -35,7 +35,7 @@ export const loadAvailable = () => {
   ready = false;
   for (const search of searches.values()) search.onUpdate({ type: "loading" });
   try {
-    worker = new Worker(new URL("search-worker.mjs?v=fba6b13b20ea", import.meta.url), { type: "module" });
+    worker = new Worker(new URL("search-worker.mjs?v=e3a2a6ceab3c", import.meta.url), { type: "module" });
     const currentWorker = worker;
     worker.addEventListener("error", () => { if (worker === currentWorker) showError(); });
     worker.addEventListener("message", ({ data }) => {
