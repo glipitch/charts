@@ -16,7 +16,7 @@ A lightweight dashboard for viewing multiple TradingView financial charts in one
 
 ## Getting started
 
-1. On an empty dashboard, type a symbol and exchange to see matching markets beneath the search field. Select a result to add your first chart, or open the two-chart example.
+1. On an empty dashboard, type a symbol and exchange to see matching markets beneath the search field. Select a result to add your first chart in a 1×1 grid, or open the two-chart example.
 2. Open settings using the chevron in the top-right corner, or press **Escape**. Search under **Available** to add more charts.
 3. Set **Columns** and **Rows** to fit your selection. When some selected charts are hidden, **Current** shows how many are displayed. Choose **Fit all** to expand the grid.
 4. Choose a chart's interval from its dropdown under **Current**. Daily-only charts offer daily, weekly, and monthly choices. Drag a row to reorder it, or focus it and press **Alt + Up/Down**.

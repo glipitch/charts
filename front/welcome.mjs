@@ -1,5 +1,6 @@
 import { createMarketSearch, loadAvailable } from "./available-markets/market-search.mjs";
-import { addCurrentMarket } from "./current-markets/current.mjs";
+import { addCurrentMarket, getCurrentMarkets } from "./current-markets/current.mjs";
+import { setGrid } from "./dimensions.mjs";
 import { open } from "./header/dialog.mjs";
 import { searchFor } from "./available-markets/available.mjs";
 
@@ -35,6 +36,7 @@ if (form && results && status) {
         button.appendChild(span);
       }
       button.addEventListener("click", () => {
+        if (!getCurrentMarkets().length) setGrid(1, 1, false);
         addCurrentMarket(market.exchange, market.symbol, market.daily);
         document.querySelector(".dialog-visibility").focus({ preventScroll: true });
       });
