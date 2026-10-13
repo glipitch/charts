@@ -1,14 +1,27 @@
-import * as current from "../current-markets/current.mjs?v=61a7eebadd5c";
-import { loadSvg } from "../utilities.mjs?v=61a7eebadd5c";
+import * as current from "../current-markets/current.mjs?v=eab82fc427d2";
+import { loadSvg } from "../utilities.mjs?v=eab82fc427d2";
 
 const theme = document.querySelector(".theme");
+const choices = document.querySelectorAll('.theme-settings input[name="theme"]');
 
-loadSvg(".theme", "svg/theme.svg?v=61a7eebadd5c");
-theme.addEventListener("click", event => {
-  const currentTheme = document.documentElement.dataset.theme;
-  const nextTheme = currentTheme === "light" ? "dark" : "light";
+const applyTheme = nextTheme => {
+  if (nextTheme === document.documentElement.dataset.theme) return;
   document.documentElement.dataset.theme = nextTheme;
   localStorage.setItem("theme", nextTheme);
-  event.stopPropagation();
+  choices.forEach(choice => { choice.checked = choice.value === nextTheme; });
   current.reloadWidgets();
+};
+
+choices.forEach(choice => {
+  choice.checked = choice.value === document.documentElement.dataset.theme;
+  choice.addEventListener("change", () => { if (choice.checked) applyTheme(choice.value); });
 });
+
+// Keep the previous button working for a cached older page.
+if (theme) {
+  loadSvg(".theme", "svg/theme.svg?v=eab82fc427d2");
+  theme.addEventListener("click", event => {
+    event.stopPropagation();
+    applyTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");
+  });
+}

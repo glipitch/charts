@@ -10,13 +10,13 @@
   <script>
     document.documentElement.dataset.theme = localStorage.theme === "light" ? "light" : "dark";
   </script>
-  <!-- <link rel="icon" type="image/svg+xml" href="icon.svg?v=61a7eebadd5c" /> -->
+  <!-- <link rel="icon" type="image/svg+xml" href="icon.svg?v=eab82fc427d2" /> -->
 
 
-  <link rel="shortcut icon" href="favicon.ico?v=61a7eebadd5c">
+  <link rel="shortcut icon" href="favicon.ico?v=eab82fc427d2">
 
   <title>Charts</title>
-  <link href="css/app.css?v=61a7eebadd5c" rel="stylesheet" />
+  <link href="css/app.css?v=eab82fc427d2" rel="stylesheet" />
 </head>
 
 <body>
@@ -41,6 +41,11 @@
             </div>
           </div>
         </div>
+        <fieldset class="theme-settings">
+          <legend>Theme</legend>
+          <label><input type="radio" name="theme" value="light" /> Light</label>
+          <label><input type="radio" name="theme" value="dark" /> Dark</label>
+        </fieldset>
         <div class="opacity-container">
           <div class="opacity-row">
             <label for="opacity-input">Opacity</label>
@@ -86,6 +91,7 @@
         </tr></tbody>
       </table>
       </div>
+      <a class="github settings-source" href="https://github.com/glipitch/charts">Source on GitHub</a>
     </div>
   </dialog>
   <header>
@@ -97,13 +103,6 @@
         <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2" />
       </svg>
     </button>
-    <button class="theme" aria-label="Theme">
-      <svg viewBox="0 0 24 24"></svg>
-    </button>
-    <a class="github" href="https://github.com/glipitch/charts" aria-label="Charts on GitHub">
-      <svg viewBox="0 0 24 24">
-      </svg>
-    </a>
   </header>
   <p class="share-status" role="status"></p>
   <div class="share-fallback" role="group" aria-label="Share layout" hidden>
@@ -119,16 +118,17 @@
         <form class="welcome-search-form">
           <label for="welcome-search">Find a market</label>
           <div class="welcome-search-controls">
-            <input id="welcome-search" type="search" placeholder="e.g. btc binance" required autocomplete="off" spellcheck="false" />
-            <button type="submit">Search markets</button>
+            <input id="welcome-search" type="search" placeholder="e.g. btc binance" autocomplete="off" spellcheck="false" aria-controls="welcome-results" />
           </div>
+          <p class="welcome-search-status" role="status"></p>
+          <ul id="welcome-results" class="welcome-results" aria-label="Matching markets"></ul>
         </form>
         <a class="example-layout" href="./NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x1">Try an Apple + Bitcoin example</a>
         <p class="welcome-hint">Your selection stays in this browser. Use the link button to share a layout.</p>
       </div>
     </section>
   </main>
-  <script type="module" src="app.mjs?v=61a7eebadd5c"></script>
+  <script type="module" src="app.mjs?v=eab82fc427d2"></script>
 </body>
 
 </html>

@@ -1,16 +1,16 @@
-import { prepare, findMarkets, resolveMarkets } from "./search.mjs?v=61a7eebadd5c";
+import { prepare, findMarkets, resolveMarkets } from "./search.mjs?v=eab82fc427d2";
 let loaded;
-let latestId;
-const load = () => loaded ||= fetch(new URL("catalogue.json?v=61a7eebadd5c", import.meta.url)).then(response => {
+const latestIds = new Map();
+const load = () => loaded ||= fetch(new URL("catalogue.json?v=eab82fc427d2", import.meta.url)).then(response => {
   if (!response.ok) throw new Error("Could not load markets");
   return response.json();
 }).then(prepare);
 self.addEventListener("message", async ({ data }) => {
-  if (data.type === "search") latestId = data.id;
+  if (data.type === "search") latestIds.set(data.channel, data.id);
   try {
     const groups = await load();
     if (data.type === "load") self.postMessage({ type: "ready" });
     else if (data.type === "resolve") self.postMessage({ type: "resolved", charts: resolveMarkets(groups, data.charts) });
-    else if (data.id === latestId) self.postMessage({ type: "results", id: data.id, ...findMarkets(groups, data.query) });
+    else if (data.id === latestIds.get(data.channel)) self.postMessage({ type: "results", channel: data.channel, id: data.id, ...findMarkets(groups, data.query, data.limit) });
   } catch { loaded = undefined; self.postMessage({ type: "error" }); }
 });

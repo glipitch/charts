@@ -53,7 +53,15 @@ main.is-empty { display: block; overflow-y: auto; }
 .welcome-search-form label { display: block; font-size: .8rem; margin-bottom: .5rem; }
 .welcome-search-controls { display: flex; gap: .5rem; }
 .welcome-search-controls input { box-sizing: border-box; flex: 1; min-width: 0; padding: .6rem .7rem; font-size: 16px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); }
-.welcome-search-controls button { padding: .6rem .8rem; min-height: 44px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); font: inherit; font-size: .8rem; cursor: pointer; }
+.welcome-content .welcome-search-status { font-size: .75rem; margin: .5rem 0; }
+.welcome-search-status:empty { margin: 0; }
+.welcome-results { list-style: none; padding: 0; margin: 0; }
+.welcome-results button { display: flex; gap: .75rem; align-items: center; box-sizing: border-box; width: 100%; padding: .6rem .7rem; min-height: 44px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); font: inherit; font-size: .8rem; cursor: pointer; text-align: left; }
+.welcome-results li + li { margin-top: .25rem; }
+.welcome-results button span:first-child { flex: 0 0 35%; color: var(--dialog-label); }
+.welcome-results button span { overflow-wrap: anywhere; min-width: 0; }
+.welcome-results button:hover { border-color: var(--opacity-color); }
+.welcome-search-status button { color: var(--opacity-color); background: none; border: 1px solid var(--border-color); border-radius: .25rem; min-height: 44px; cursor: pointer; }
 .example-layout { display: inline-block; padding: .5rem; color: var(--opacity-color); font-size: .85rem; }
 .welcome-content .welcome-hint { font-size: .75rem; margin-top: 1.25rem; }
 @media (max-width: 400px) {
