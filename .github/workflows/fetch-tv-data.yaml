@@ -6,6 +6,8 @@ on:
     paths:
       - .github/workflows/fetch-tv-data.yaml
       - back/fetch-tv-data.js
+      - front/available-markets/catalogue.mjs
+      - front/market-rules.mjs
   schedule:
     - cron: "0 1 * * *"
   workflow_dispatch:

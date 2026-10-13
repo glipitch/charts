@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import path from 'node:path';
 import vm from 'node:vm';
+import * as catalogue from '../front/available-markets/catalogue.mjs';
 
 const source = readFileSync(new URL('../back/fetch-tv-data.js', import.meta.url), 'utf8');
 const market = { symbol: 'ONE', exchange: 'TEST', prefix: 'TEST' };
@@ -17,6 +18,7 @@ const scenario = async (fetchPage, { previous = { TEST: ['OLD'] }, renameFails =
     module: { exports: {} },
     require(name) {
       if (name === 'path') return path;
+      if (name === '../front/available-markets/catalogue.mjs') return catalogue;
       return {
         existsSync: file => files.has(file) || file === 'front/available-markets',
         readFileSync: file => files.get(file),
@@ -81,6 +83,13 @@ test('uncleared search caps retain the complete saved exchange with a warning', 
   assert.equal(result.error, undefined);
   assert.deepEqual(result.data, { TEST: ['OLD'] });
   assert.match(result.warnings[0], /exceeds the search cap; retaining 1 previously saved TEST markets/);
+});
+
+test('a capped refresh preserves daily flags without replacing saved data with a partial result', async () => {
+  const result = await scenario(cappedExchange, { previous: { TEST: [["OLD", "D"]] } });
+  assert.equal(result.error, undefined);
+  assert.deepEqual(result.data, { TEST: [["OLD", "D"]] });
+  assert.equal(result.warnings.length, 1);
 });
 
 test('an exchange without a valid saved catalogue still fails on a search cap', async () => {

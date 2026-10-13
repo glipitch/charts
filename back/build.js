@@ -34,7 +34,15 @@ const build = () => {
   for (const file of files) {
     const destination = path.join(output, path.relative(front, file));
     fs.mkdirSync(path.dirname(destination), { recursive: true });
-    if (/\.(?:html|mjs|css)$/.test(file)) {
+    if (path.relative(front, file).split(path.sep).join('/') === 'available-markets/data.json') {
+      // Cached releases still expect arrays of strings at data.json. Keep that
+      // endpoint compatible; the current worker uses the enriched catalogue.
+      fs.copyFileSync(file, path.join(output, 'available-markets', 'catalogue.json'));
+      const grouped = JSON.parse(fs.readFileSync(file, 'utf8'));
+      const legacy = Object.fromEntries(Object.entries(grouped).map(([source, entries]) =>
+        [source, entries.map(entry => typeof entry === 'string' ? entry : entry[0])]));
+      fs.writeFileSync(destination, JSON.stringify(legacy));
+    } else if (/\.(?:html|mjs|css)$/.test(file)) {
       fs.writeFileSync(destination, versionAssets(fs.readFileSync(file, 'utf8'), version));
     } else fs.copyFileSync(file, destination);
   }

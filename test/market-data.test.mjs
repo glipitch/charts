@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
 import path from 'node:path';
+import * as catalogue from '../front/available-markets/catalogue.mjs';
 
 const source = readFileSync(new URL('../back/fetch-tv-data.js', import.meta.url), 'utf8');
 
@@ -13,6 +14,7 @@ test('market collection saves plain, unique symbols from prefix searches', async
     module: { exports: {} },
     require(name) {
       if (name === 'path') return path;
+      if (name === '../front/available-markets/catalogue.mjs') return catalogue;
       if (name === 'fs') return {
         existsSync: file => !file.endsWith('.json') && !file.endsWith('.tmp'),
         writeFileSync(_file, content) { savedData = JSON.parse(content); },
@@ -67,7 +69,8 @@ test('market collection saves plain, unique symbols from prefix searches', async
 test('published market data contains no highlighting or duplicate symbols', () => {
   const data = JSON.parse(readFileSync(new URL('../front/available-markets/data.json', import.meta.url), 'utf8'));
   for (const [exchange, symbols] of Object.entries(data)) {
-    assert.equal(symbols.find(symbol => /<\/?em>/i.test(symbol)), undefined, exchange);
-    assert.equal(new Set(symbols).size, symbols.length, exchange);
+    const names = symbols.map(entry => catalogue.readMarket(entry).symbol);
+    assert.equal(names.find(symbol => /<\/?em>/i.test(symbol)), undefined, exchange);
+    assert.equal(new Set(names).size, names.length, exchange);
   }
 });

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const targetDirectory = 'front/available-markets';
+const { buildCatalogue, countMarkets, retainSource } = require('../front/available-markets/catalogue.mjs');
 
 const DELAY = 200;
 const CAP = 10000;
@@ -28,14 +29,11 @@ module.exports = async ({ fetch }) => {
         try {
             symbols = await fetchExchange(exchange, fetch);
         } catch (error) {
-            const savedSymbols = Object.hasOwn(previous, exchange) ? previous[exchange] : undefined;
-            if (!(error instanceof SearchCapError) || !Array.isArray(savedSymbols) ||
-                !savedSymbols.length || savedSymbols.some(symbol => typeof symbol !== 'string' || !symbol)) {
-                throw error;
-            }
+            if (!(error instanceof SearchCapError)) throw error;
+            try { symbols = retainSource(previous, exchange); } catch { throw error; }
+            if (!symbols.length) throw error;
             // Discard the entire partial exchange and retain its last complete
             // catalogue. Description searches can hit the cap even at max depth.
-            symbols = savedSymbols.map(symbol => ({ symbol, exchange }));
             console.warn(`::warning::${error.message}; retaining ${symbols.length} previously saved ${exchange} markets`);
         }
         allData = allData.concat(symbols);
@@ -44,26 +42,18 @@ module.exports = async ({ fetch }) => {
     }
 
     ensureDirectory(targetDirectory);
-    const reduced = reduce(allData);
-    const filtered = dedupe(reduced, ({ symbol, exchange }) => `${symbol}-${exchange}`);
-    if (!filtered.length) throw new Error('Refusing to publish an empty catalogue');
-    filtered.sort((a, b) =>
-        a.exchange.localeCompare(b.exchange) || a.symbol.localeCompare(b.symbol));
-
-    const grouped = {};
-    for (const { exchange, symbol } of filtered) {
-        if (!grouped[exchange]) grouped[exchange] = [];
-        grouped[exchange].push(symbol);
-    }
+    const grouped = buildCatalogue(allData);
+    const count = countMarkets(grouped);
+    if (!count) throw new Error('Refusing to publish an empty catalogue');
     if (Object.keys(previous).length) {
-        const previousCount = Object.values(previous).reduce((count, symbols) => count + symbols.length, 0);
-        if (filtered.length < previousCount * 0.75) {
-            throw new Error(`Refusing catalogue drop from ${previousCount} to ${filtered.length} markets`);
+        const previousCount = countMarkets(previous);
+        if (count < previousCount * 0.75) {
+            throw new Error(`Refusing catalogue drop from ${previousCount} to ${count} markets`);
         }
     }
     writeFile('data.json', JSON.stringify(grouped));
     const elapsed = ((Date.now() - t0) / 1000).toFixed(0);
-    console.log(`\nDone: ${filtered.length} unique markets in ${elapsed}s`);
+    console.log(`\nDone: ${count} unique markets in ${elapsed}s`);
 };
 
 // --- Recursive fetching with subdivision on cap ---
@@ -182,28 +172,6 @@ async function discoverExchanges(fetch) {
 // --- Utilities ---
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-function dedupe(arr, keyFn) {
-    const seen = new Set();
-    return arr.filter(item => {
-        const key = keyFn(item);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
-}
-
-function reduce(symbols) {
-    return symbols.map(({ symbol, exchange }) => {
-        if (typeof symbol !== 'string' || !symbol || typeof exchange !== 'string' || !exchange) {
-            throw new Error('Invalid market in response');
-        }
-        return {
-            symbol: symbol.replace(/<\/?em>/gi, ''),
-            exchange
-        };
-    });
-}
 
 function writeFile(fileName, content) {
     const destination = path.join(targetDirectory, fileName);

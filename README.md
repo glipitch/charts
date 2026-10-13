@@ -9,6 +9,7 @@ A lightweight dashboard for viewing multiple TradingView financial charts in one
 - Search markets by symbol and exchange, such as `btc binance` or `aapl nasdaq`.
 - Set the number of columns and rows, and reorder your charts.
 - Choose a separate time interval for each chart.
+- Open known end-of-day markets at daily intervals automatically.
 - Switch between light and dark themes and adjust the settings panel's opacity.
 - Keep your selection in your browser and share a layout through its URL.
 - View charts in a scrolling column on phones while retaining your desktop grid.
@@ -37,7 +38,7 @@ Your browser remembers charts, grid dimensions, theme, search, and panel opacity
 
 ## Running locally
 
-Install [Node.js](https://nodejs.org/), then run these commands from the repository directory. No package installation is needed.
+Install [Node.js](https://nodejs.org/) 22.12 or later, then run these commands from the repository directory. No package installation is needed.
 
 ```sh
 node back/serve.js
@@ -54,7 +55,9 @@ The build writes a deployable site to `dist/`. See the [maintenance guide](docs/
 
 ## Chart data
 
-Charts are embedded TradingView widgets. Market availability and data delays depend on TradingView and the exchange. The searchable market catalogue is refreshed separately from chart prices.
+Charts are embedded TradingView widgets. Market availability and data delays depend on TradingView and the exchange. Known end-of-day charts use daily, weekly, or monthly intervals. Entries verified as unavailable in widgets are omitted from search; an existing saved chart for one of these entries offers a link to TradingView instead.
+
+The searchable market catalogue is refreshed separately from chart prices. Historical and untested series are retained, so search availability is not a guarantee that every TradingView widget can display data.
 
 ## License
 

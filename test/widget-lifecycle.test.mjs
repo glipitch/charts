@@ -17,7 +17,9 @@ const browser = ({ lazy = false } = {}) => {
     },
   };
   const element = () => ({
-    setAttribute() {}, replaceChildren() {},
+    setAttribute() {},
+    classList: { add() {} },
+    replaceChildren(...children) { this.children = children; },
     get previousElementSibling() { return main.children[main.children.indexOf(this) - 1] || null; },
     get nextSibling() { return main.children[main.children.indexOf(this) + 1] || null; },
     remove() { this.isConnected = false; main.children.splice(main.children.indexOf(this), 1); },
@@ -120,4 +122,30 @@ test('a stale intersection after a theme reset cannot start its replacement char
   intersect(main.children[1]);
   await Promise.resolve();
   assert.equal(calls.length, 1);
+});
+
+test('resolving a chart source replaces that widget once without recreating its neighbours', async () => {
+  const { main, calls } = browser();
+  const widget = await import(`../front/current-markets/widget.mjs?lifecycle=${importId++}`);
+  widget.sync(charts);
+  await Promise.resolve();
+  const neighbour = main.children[2];
+  const corrected = [{ ...charts[0], exchange: 'CORRECT' }, ...charts.slice(1)];
+  widget.sync(corrected);
+  await Promise.resolve();
+  assert.equal(calls.length, 4);
+  assert.equal(calls[3].symbol, 'CORRECT:A');
+  assert.equal(main.children[2], neighbour);
+  widget.sync(corrected);
+  await Promise.resolve();
+  assert.equal(calls.length, 4);
+});
+
+test('an existing restricted chart provides a useful external link without loading a failed widget', async () => {
+  const { main, calls } = browser();
+  const widget = await import(`../front/current-markets/widget.mjs?lifecycle=${importId++}`);
+  await widget.addWidget({ id: 'restricted', exchange: 'FINRA', symbol: 'A4404722', interval: 'D' });
+  assert.equal(calls.length, 0);
+  assert.match(main.children[1].children[0].textContent, /unavailable in embedded charts/);
+  assert.equal(main.children[1].children[1].href, 'https://www.tradingview.com/chart/?symbol=FINRA%3AA4404722');
 });

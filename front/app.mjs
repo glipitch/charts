@@ -6,6 +6,7 @@ import * as available from "./available-markets/available.mjs";
 import * as current from "./current-markets/current.mjs";
 import "./opacity.mjs";
 available.subscribe(current.addCurrentMarket);
+available.subscribeCurrent(current.getCurrentMarkets, current.applyMarketMetadata);
 dimensions.manage();
 current.loadCurrentMarkets();
 available.loadAvailable();

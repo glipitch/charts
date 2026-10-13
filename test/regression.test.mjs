@@ -108,7 +108,7 @@ test("URL state parses path charts and short grid", async () => {
   const state = urlState.getState();
 
   assert.deepEqual(state.grid, { x: 2, y: 4 });
-  assert.equal(state.charts[0].exchange, "Binance");
+  assert.equal(state.charts[0].exchange, "BINANCE");
   assert.equal(state.charts[0].symbol, "BTCUSDT");
   assert.equal(state.charts[0].interval, "60");
   assert.equal(state.charts[1].exchange, "NYSE");
