@@ -24,7 +24,8 @@
     box-shadow: var(--shadow);
 }
 table { color: var(--highlight-color); border-collapse: collapse; }
-.interval { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.interval { background: var(--dialog-background); border: 1px solid var(--border-color); border-radius: .2rem; padding: .15rem .3rem; color: inherit; font: inherit; cursor: pointer; min-width: 4rem; max-width: 100%; }
+.current td:nth-child(3) { width: 4.5rem; }
 
 th {
     position: sticky;
@@ -130,6 +131,8 @@ h4 {
     display: flex;
     align-items: baseline;
     gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .market-count {
@@ -137,6 +140,9 @@ h4 {
     color: var(--dialog-label);
     font-weight: normal;
 }
+
+.fit-all { padding: .15rem .4rem; font-size: .7rem; background: none; color: var(--opacity-color); border: 1px solid var(--border-color); border-radius: .2rem; cursor: pointer; }
+.fit-all:disabled { opacity: .5; cursor: default; }
 
 .empty-state {
     font-size: 0.75rem;

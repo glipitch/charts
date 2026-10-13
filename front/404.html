@@ -55,7 +55,8 @@
       <div class="divider"></div>
       <div class="current-header">
         <h4>Current</h4>
-        <span class="market-count"></span>
+        <span class="market-count" role="status"></span>
+        <button class="fit-all" hidden>Fit all</button>
       </div>
       <div class="table-scroll current-scroll">
       <table class="current" aria-label="Current charts">
@@ -91,6 +92,11 @@
     <button class="dialog-visibility" aria-label="Toggle settings" aria-controls="settings" aria-expanded="false">
       <svg viewBox="0 0 20 20"></svg>
     </button>
+    <button class="share" aria-label="Copy layout link" title="Copy layout link" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2" />
+      </svg>
+    </button>
     <button class="theme" aria-label="Theme">
       <svg viewBox="0 0 24 24"></svg>
     </button>
@@ -99,7 +105,28 @@
       </svg>
     </a>
   </header>
+  <p class="share-status" role="status"></p>
+  <div class="share-fallback" role="group" aria-label="Share layout" hidden>
+    <label for="share-url">Copy this link</label>
+    <input id="share-url" type="url" readonly />
+    <button class="close-share" aria-label="Close share link">Close</button>
+  </div>
   <main>
+    <section class="chart-empty" aria-labelledby="welcome-heading" hidden>
+      <div class="welcome-content">
+        <h1 id="welcome-heading">Add your first chart</h1>
+        <p>Choose markets and arrange your charts in a grid.</p>
+        <form class="welcome-search-form">
+          <label for="welcome-search">Find a market</label>
+          <div class="welcome-search-controls">
+            <input id="welcome-search" type="search" placeholder="e.g. btc binance" required autocomplete="off" spellcheck="false" />
+            <button type="submit">Search markets</button>
+          </div>
+        </form>
+        <a class="example-layout" href="./NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x1">Try an Apple + Bitcoin example</a>
+        <p class="welcome-hint">Your selection stays in this browser. Use the link button to share a layout.</p>
+      </div>
+    </section>
   </main>
   <script type="module" src="app.mjs"></script>
 </body>

@@ -32,6 +32,31 @@ header>* {
     cursor: pointer;
 }
 
+.share { cursor: pointer; color: var(--highlight-color); }
+.share > svg { width: var(--large); height: var(--large); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.share:disabled { opacity: .35; cursor: default; }
+.share-status, .share-fallback {
+    position: fixed;
+    right: max(.4rem, env(safe-area-inset-right));
+    top: calc(max(.4rem, env(safe-area-inset-top)) + 48px);
+    z-index: 300;
+    box-sizing: border-box;
+    max-width: calc(100% - 1rem);
+    padding: .6rem .8rem;
+    margin: 0;
+    background: var(--dialog-background);
+    color: var(--highlight-color);
+    border: 1px solid var(--border-color);
+    border-radius: .3rem;
+    box-shadow: var(--shadow);
+    font-size: .8rem;
+}
+.share-status:empty { padding: 0; border: 0; box-shadow: none; background: none; }
+.share-fallback { top: calc(max(.4rem, env(safe-area-inset-top)) + 90px); width: 24rem; }
+.share-fallback label { display: block; margin-bottom: .4rem; }
+.share-fallback input { box-sizing: border-box; width: 100%; padding: .5rem; font: inherit; color: inherit; background: var(--background-color); border: 1px solid var(--border-color); }
+.close-share { margin-top: .5rem; padding: .35rem .7rem; color: inherit; background: none; border: 1px solid var(--border-color); border-radius: .2rem; cursor: pointer; }
+
 .theme>svg {
     width: var(--large);
     fill: var(--highlight-color);

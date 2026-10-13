@@ -100,3 +100,8 @@ search.addEventListener("input", () => {
   }
   localStorage.setItem("search", search.value);
 });
+
+export const searchFor = query => {
+  search.value = query;
+  search.dispatchEvent(new Event("input", { bubbles: true }));
+};

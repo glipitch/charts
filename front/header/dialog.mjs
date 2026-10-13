@@ -12,7 +12,8 @@ const setCurrentVisibility = value => {
 const close = () => {
   setCurrentVisibility("hidden");
   dialog.close();
-  if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+  const target = previousFocus?.isConnected && previousFocus.getClientRects().length ? previousFocus : chevron;
+  target.focus({ preventScroll: true });
 };
 
 const toggle = () => {

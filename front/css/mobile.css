@@ -47,7 +47,10 @@
   .current td:nth-child(3) { padding: 0; }
   .current td:nth-child(4), .current th:nth-child(4) { width: 44px; padding: 0; }
   .current td:nth-child(4) > button { width: 44px; height: 44px; }
-  .interval { min-height: 44px; width: 100%; }
+  .interval { min-width: 0; min-height: 44px; width: 100%; font-size: 16px; padding: 0 .1rem; }
+  .fit-all { min-height: 44px; padding: .25rem .6rem; }
+  .share-fallback input { font-size: 16px; }
+  .close-share { min-height: 44px; }
   .available td:nth-child(1), .available th:nth-child(1) { width: 35%; }
   .search { box-sizing: border-box; width: calc(100% - 1rem); max-width: 24rem; min-height: 44px; font-size: 16px; }
   .clear { min-height: 44px; }

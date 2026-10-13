@@ -16,17 +16,17 @@ A lightweight dashboard for viewing multiple TradingView financial charts in one
 
 ## Getting started
 
-1. Open settings using the chevron in the top-right corner, or press **Escape**.
+1. On an empty dashboard, search for your first market or open the two-chart example. You can also open settings using the chevron in the top-right corner, or press **Escape**.
 2. Search under **Available**, then select a market to add its chart.
-3. Set **Columns** and **Rows** to fit your selection. The grid displays up to columns × rows charts; increase its size to show more.
-4. Select a chart's interval under **Current** to cycle through the supported intervals. Drag a row to reorder it, or focus it and press **Alt + Up/Down**.
+3. Set **Columns** and **Rows** to fit your selection. When some selected charts are hidden, **Current** shows how many are displayed. Choose **Fit all** to expand the grid.
+4. Choose a chart's interval from its dropdown under **Current**. Daily-only charts offer daily, weekly, and monthly choices. Drag a row to reorder it, or focus it and press **Alt + Up/Down**.
 5. Close settings using the chevron or **Escape** to view your charts.
 
 Use a chart's × button to remove it, or **Clear** to remove the whole selection. With a keyboard, use **Tab** to reach controls and **Enter** or **Space** to select an available market.
 
 ## Sharing a layout
 
-Copy the address bar after choosing your charts. The URL includes their order, intervals, and grid dimensions:
+Use the link button in the top-right toolbar to copy your layout. It shows **Link copied** when successful, or a selectable link if clipboard access is unavailable. You can also copy the address bar. The URL includes the charts' order, intervals, and grid dimensions:
 
 ```text
 https://glipitch.github.io/charts/NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x1
