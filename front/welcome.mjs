@@ -3,6 +3,7 @@ import { addCurrentMarket, getCurrentMarkets } from "./current-markets/current.m
 import { setGrid } from "./dimensions.mjs";
 import { open } from "./header/dialog.mjs";
 import { searchFor } from "./available-markets/available.mjs";
+import { showFirstChartGuide } from "./header/first-chart-guide.mjs";
 
 const form = document.querySelector(".welcome-search-form");
 const input = document.querySelector("#welcome-search");
@@ -39,6 +40,7 @@ if (form && results && status) {
         if (!getCurrentMarkets().length) setGrid(1, 1, false);
         addCurrentMarket(market.exchange, market.symbol, market.daily);
         document.querySelector(".dialog-visibility").focus({ preventScroll: true });
+        showFirstChartGuide();
       });
       item.appendChild(button);
       results.appendChild(item);

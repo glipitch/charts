@@ -29,6 +29,7 @@ export const open = () => {
   previousFocus = document.activeElement;
   setCurrentVisibility("visible");
   dialog.show();
+  window.dispatchEvent(new CustomEvent("settingsopen"));
   const compact = window.innerWidth <= 800 || (window.innerWidth <= 1000 && window.innerHeight <= 500) || window.matchMedia('(pointer: coarse)').matches;
   if (compact) {
     dialog.querySelector(".dialog-content").scrollTop = 0;
