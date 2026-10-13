@@ -41,11 +41,11 @@ main>div {
     justify-content: center;
     box-sizing: border-box;
     min-height: 100%;
-    padding: 4rem 1.25rem 2rem;
+    padding: 4rem 1.25rem 1.5rem;
     text-align: center;
 }
 .welcome-content { width: min(100%, 28rem); }
-main.is-empty { display: block; overflow-y: auto; }
+main.is-empty { display: block; overflow-y: auto; scrollbar-gutter: stable; }
 :root[data-current="visible"] .chart-empty { visibility: hidden; }
 .welcome-content h1 { font-size: clamp(1.5rem, 5vw, 2rem); margin: 0 0 .75rem; font-weight: 500; }
 .welcome-content p { color: var(--dialog-label); font-size: .9rem; line-height: 1.6; }
@@ -53,9 +53,9 @@ main.is-empty { display: block; overflow-y: auto; }
 .welcome-search-form label { display: block; font-size: .8rem; margin-bottom: .5rem; }
 .welcome-search-controls { display: flex; gap: .5rem; }
 .welcome-search-controls input { box-sizing: border-box; flex: 1; min-width: 0; padding: .6rem .7rem; font-size: 16px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); }
-.welcome-content .welcome-search-status { font-size: .75rem; margin: .5rem 0; }
-.welcome-search-status:empty { margin: 0; }
-.welcome-results { list-style: none; padding: 0; margin: 0; }
+/* Keep the centred panel the same size through empty, loading and result states. */
+.welcome-content .welcome-search-status { display: flex; align-items: center; gap: .4rem; box-sizing: border-box; height: 3rem; font-size: .75rem; margin: .5rem 0; }
+.welcome-results { list-style: none; padding: 0; margin: 0; height: clamp(8.75rem, 32svh, 16rem); overflow-y: auto; scrollbar-gutter: stable; }
 .welcome-results button { display: flex; gap: .75rem; align-items: center; box-sizing: border-box; width: 100%; padding: .6rem .7rem; min-height: 44px; border: 1px solid var(--border-color); border-radius: .25rem; background: var(--dialog-background); color: var(--highlight-color); font: inherit; font-size: .8rem; cursor: pointer; text-align: left; }
 .welcome-results li + li { margin-top: .25rem; }
 .welcome-results button span:first-child { flex: 0 0 35%; color: var(--dialog-label); }
