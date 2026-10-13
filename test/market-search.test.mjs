@@ -27,7 +27,7 @@ const setup = async t => {
   return { ...api, workers, flush };
 };
 
-test('first-visit and settings searches share one worker, debounce independently, and reject stale results', async t => {
+test('search channels share one worker, debounce independently, and reject stale results', async t => {
   const { createMarketSearch, workers, flush } = await setup(t);
   const settingsUpdates = [], welcomeUpdates = [];
   const settings = createMarketSearch(data => settingsUpdates.push(data));
@@ -73,7 +73,7 @@ test('loading failure retries a pending query and ignores messages from the fail
   assert.equal(resolved[0].daily, true);
 });
 
-test('the actual worker keeps both search channels alive while loading, and limits first-visit results', async t => {
+test('the actual worker keeps search channels alive while loading and respects result limits', async t => {
   let handler, finishLoad;
   const messages = [];
   const previousSelf = Object.getOwnPropertyDescriptor(globalThis, 'self');

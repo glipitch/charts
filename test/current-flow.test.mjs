@@ -91,6 +91,19 @@ test('removing charts retains keyboard focus on the next chart, then on market s
   assert.equal(controls['.chart-empty'].hidden, false);
 });
 
+test('an empty saved dashboard starts at 1×1 while a new grid chosen in settings is respected', t => {
+  const { controller, inputs, widget, storage, win } = setup(t, { grid: [1, 6] });
+  assert.deepEqual([inputs.x.value, inputs.y.value], [1, 1]);
+  assert.equal(storage.get('y'), '1');
+  controller.addCurrentMarket('NASDAQ', 'AAPL');
+  assert.equal(widget.shown.length, 1);
+  assert.ok(win.location.href.endsWith('?g=1x1'));
+  dimensions.setGrid(2, 2);
+  controller.addCurrentMarket('BINANCE', 'BTCUSDT');
+  assert.deepEqual([inputs.x.value, inputs.y.value], [2, 2]);
+  assert.equal(widget.shown.length, 2);
+});
+
 test('single-chart presentation follows the visible grid capacity as charts are added and cleared', t => {
   const { controller, controls, widget } = setup(t, { grid: [1, 1] });
   controller.addCurrentMarket('NASDAQ', 'AAPL');

@@ -74,11 +74,12 @@
         <tbody></tbody>
       </table>
       </div>
-      <p class="empty-state">click an available market to add it</p>
+      <p class="empty-state">No charts selected yet.</p>
       <button class="clear">Clear</button>
       <div class="divider"></div>
       <h4>Available</h4>
-      <input id="search" type="search" class="search" aria-label="Search markets" placeholder="e.g. btc binance" spellcheck="false" autocomplete="off" />
+      <p id="market-search-hint" class="market-search-hint">Search by symbol or exchange, then select a market to add a chart.</p>
+      <input id="search" type="search" class="search" aria-label="Search markets" aria-describedby="market-search-hint" placeholder="e.g. btcusdt binance" spellcheck="false" autocomplete="off" />
       <p class="search-status sr-only" role="status"></p>
       <div class="table-scroll available-scroll">
       <table class="available" aria-label="Available markets">
@@ -91,11 +92,12 @@
         </tr></tbody>
       </table>
       </div>
+      <p class="settings-return-hint">Use the chevron<span class="keyboard-shortcut"> or press <kbd>Esc</kbd></span> to return to your charts.</p>
       <a class="github settings-source" href="https://github.com/glipitch/charts">Source on GitHub</a>
     </div>
   </dialog>
   <header>
-    <button class="dialog-visibility" aria-label="Toggle settings" aria-controls="settings" aria-expanded="false">
+    <button class="dialog-visibility" aria-label="Toggle settings" aria-controls="settings" aria-expanded="false" aria-keyshortcuts="Escape">
       <svg viewBox="0 0 20 20"></svg>
     </button>
     <button class="share" aria-label="Copy layout link" title="Copy layout link" disabled>
@@ -104,10 +106,6 @@
       </svg>
     </button>
   </header>
-  <aside class="first-chart-guide" hidden aria-label="Settings hint">
-    <p id="settings-hint" role="status">Use the chevron above<span class="guide-shortcut"> or press <kbd>Esc</kbd></span> to add charts and change the grid. Use it again to return to your charts.</p>
-    <button type="button" class="dismiss-guide">Got it</button>
-  </aside>
   <p class="share-status" role="status"></p>
   <div class="share-fallback" role="group" aria-label="Share layout" hidden>
     <label for="share-url">Copy this link</label>
@@ -118,15 +116,8 @@
     <section class="chart-empty" aria-labelledby="welcome-heading" hidden>
       <div class="welcome-content">
         <h1 id="welcome-heading">Add your first chart</h1>
-        <p>Choose markets and arrange your charts in a grid.</p>
-        <form class="welcome-search-form">
-          <label for="welcome-search">Find a market</label>
-          <div class="welcome-search-controls">
-            <input id="welcome-search" type="search" placeholder="e.g. btc binance" autocomplete="off" spellcheck="false" aria-controls="welcome-results" />
-          </div>
-          <p class="welcome-search-status" role="status"></p>
-          <ul id="welcome-results" class="welcome-results" aria-label="Matching markets"></ul>
-        </form>
+        <p>Open settings with the <svg class="welcome-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="M4.707 2.293a1 1 0 00-1.414 1.414l6 6a1 1 0 001.414 0l6-6a1 1 0 00-1.414-1.414L10 7.586 4.707 2.293zm0 8a1 1 0 10-1.414 1.414l6 6a1 1 0 001.414 0l6-6a1 1 0 00-1.414-1.414L10 15.586l-5.293-5.293z" /></svg> chevron in the top right<span class="keyboard-shortcut">, or press <kbd>Esc</kbd></span>.</p>
+        <p>Search under <strong>Available</strong> and select a market. Use the same control to close settings and view your charts.</p>
         <a class="example-layout" href="./NASDAQ:AAPL,BINANCE:BTCUSDT:240?g=2x1">Try an Apple + Bitcoin example</a>
         <p class="welcome-hint">Your selection stays in this browser. Use the link button to share a layout.</p>
       </div>

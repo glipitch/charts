@@ -198,6 +198,9 @@ export const loadCurrentMarkets = () => {
     localStorage.setItem("charts", JSON.stringify(charts));
   } else {
     charts = readSavedState().charts;
+    // Start an empty dashboard with one full-size chart. Users can then choose
+    // a different grid in settings before selecting their first market.
+    if (!charts.length) dimensions.setGrid(1, 1, false);
   }
 
   urlState.update(charts);
