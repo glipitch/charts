@@ -1,5 +1,5 @@
-import { readMarket } from "./catalogue.mjs?v=75b6f4773e20";
-import { canonicalExchange, canonicalSymbol, isDailyOnly, isWidgetRestricted, sourceSearchNames } from "../market-rules.mjs?v=75b6f4773e20";
+import { readMarket } from "./catalogue.mjs?v=f85cc399f4fb";
+import { canonicalExchange, canonicalSymbol, isDailyOnly, isWidgetRestricted, sourceSearchNames } from "../market-rules.mjs?v=f85cc399f4fb";
 
 export const prepare = grouped => Object.entries(grouped).map(([source, entries]) => {
   const exchange = canonicalExchange(source);
