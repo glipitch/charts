@@ -1,5 +1,5 @@
-import { loadSvg } from "../utilities.mjs?v=6e45d42513a5";
+import { loadSvg } from "../utilities.mjs?v=297ad0c0252b";
 
 const github = document.querySelector(".github");
-if (github?.querySelector("svg")) loadSvg(".github", "svg/github.svg?v=6e45d42513a5");
+if (github?.querySelector("svg")) loadSvg(".github", "svg/github.svg?v=297ad0c0252b");
 github?.addEventListener("click", event => event.stopPropagation());
