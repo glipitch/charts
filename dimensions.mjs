@@ -1,5 +1,5 @@
-import * as constants from "./constants.mjs?v=40fab349801d";
-import * as utilities from "./utilities.mjs?v=40fab349801d";
+import * as constants from "./constants.mjs?v=12d6ec78545e";
+import * as utilities from "./utilities.mjs?v=12d6ec78545e";
 export const manage = () => {
   manageDimension("x");
   manageDimension("y");
