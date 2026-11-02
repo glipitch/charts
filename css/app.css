@@ -1,9 +1,9 @@
-@import url(settings.css?v=aa1bcf55945e);
-@import url(header.css?v=aa1bcf55945e);
-@import url(main.css?v=aa1bcf55945e);
-@import url(dialog.css?v=aa1bcf55945e);
-@import url(tables.css?v=aa1bcf55945e);
-@import url(mobile.css?v=aa1bcf55945e);
+@import url(settings.css?v=2fa4e15c47b1);
+@import url(header.css?v=2fa4e15c47b1);
+@import url(main.css?v=2fa4e15c47b1);
+@import url(dialog.css?v=2fa4e15c47b1);
+@import url(tables.css?v=2fa4e15c47b1);
+@import url(mobile.css?v=2fa4e15c47b1);
 
 :root {
   --large: 1rem;
