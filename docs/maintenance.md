@@ -48,6 +48,8 @@ Legacy COT records can combine COT and COT2 identifiers. Only individually verif
 
 The refresh preserves the previous catalogue if requests fail or the total market count would drop by more than 25%. When an exchange search still hits TradingView's result cap after subdivision, the refresh retains that exchange's saved markets, emits a workflow warning, and updates the other exchanges. A capped exchange without valid saved data stops publication.
 
+Failed page requests get five attempts, waiting 5, 10, 20, and 40 seconds between attempts. If pagination unexpectedly returns an empty page, the collector discards that exchange's partial results and restarts the exchange from a fresh probe, with up to three attempts and waits of 15 and 30 seconds. Persistent failures still stop publication and preserve the previous catalogue. Retry logs identify the source, query, offset, and attempt.
+
 A new refresh cancels an older running refresh, so retained data comes from the latest checkout rather than a snapshot preceding a catalogue repair.
 
 Review workflow warnings when checking catalogue completeness: a successful refresh can include older entries for an exchange whose search was capped.

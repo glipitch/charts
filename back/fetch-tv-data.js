@@ -9,8 +9,13 @@ const TYPES = ['stock', 'etf', 'futures', 'forex', 'crypto',
     'index', 'bond', 'cfd', 'warrant', 'crypto_futures'];
 const PREFIXES = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
 const MAX_PREFIX_DEPTH = 4;
+const PAGE_ATTEMPTS = 5;
+const PAGE_RETRY_DELAY = 5000;
+const EXCHANGE_ATTEMPTS = 3;
+const EXCHANGE_RETRY_DELAY = 15000;
 
 class SearchCapError extends Error {}
+class IncompletePageError extends Error {}
 
 module.exports = async ({ fetch }) => {
     const t0 = Date.now();
@@ -59,6 +64,21 @@ module.exports = async ({ fetch }) => {
 // --- Recursive fetching with subdivision on cap ---
 
 async function fetchExchange(exchange, fetch) {
+    for (let attempt = 1; attempt <= EXCHANGE_ATTEMPTS; attempt++) {
+        try {
+            return await fetchExchangeOnce(exchange, fetch);
+        } catch (error) {
+            if (!(error instanceof IncompletePageError) || attempt === EXCHANGE_ATTEMPTS) throw error;
+            const delay = EXCHANGE_RETRY_DELAY * attempt;
+            console.log(`${error.message}; restarting ${exchange} after ${delay / 1000}s (attempt ${attempt + 1}/${EXCHANGE_ATTEMPTS})`);
+            // Start with a fresh probe and discard every partial type/prefix.
+            // Retrying only the empty page can mix different result snapshots.
+            await sleep(delay);
+        }
+    }
+}
+
+async function fetchExchangeOnce(exchange, fetch) {
     await sleep(DELAY);
     const probe = await fetchPageSafe(exchange, '', '', 0, fetch);
     const total = probeTotal(probe);
@@ -125,7 +145,7 @@ async function paginateAll(firstPage, exchange, type, text, fetch) {
     while (remaining > 0) {
         await sleep(DELAY);
         const page = await fetchPageSafe(exchange, type, text, start, fetch);
-        if (!page?.symbols?.length) throw new Error(`Incomplete page: ${exchange}/${type}/${text}@${start}`);
+        if (!page?.symbols?.length) throw new IncompletePageError(`Incomplete page: ${exchange}/${type}/${text}@${start}`);
         symbols.push(...page.symbols);
         remaining = page.symbols_remaining || 0;
         start += 50;
@@ -133,15 +153,17 @@ async function paginateAll(firstPage, exchange, type, text, fetch) {
     return symbols;
 }
 
-async function fetchPageSafe(exchange, type, text, start, fetch, retries = 3) {
-    for (let attempt = 1; attempt <= retries; attempt++) {
+async function fetchPageSafe(exchange, type, text, start, fetch) {
+    for (let attempt = 1; attempt <= PAGE_ATTEMPTS; attempt++) {
         try {
             return await fetchPage(exchange, type, text, start, fetch);
         } catch (err) {
-            if (attempt === retries) {
+            if (attempt === PAGE_ATTEMPTS) {
                 throw new Error(`Failed ${exchange}/${type}/${text}@${start}: ${err.message}`);
             }
-            await sleep(2000 * attempt);
+            const delay = PAGE_RETRY_DELAY * 2 ** (attempt - 1);
+            console.log(`Retrying ${exchange}/${type}/${text}@${start} after ${err.message} in ${delay / 1000}s (attempt ${attempt + 1}/${PAGE_ATTEMPTS})`);
+            await sleep(delay);
         }
     }
 }
