@@ -1,5 +1,5 @@
-import { getNewId } from "../utilities.mjs?v=e6b0ec3e8f0b";
-import { canonicalExchange, canonicalSymbol, isDailyOnly } from "../market-rules.mjs?v=e6b0ec3e8f0b";
+import { getNewId } from "../utilities.mjs?v=4fa19015470d";
+import { canonicalExchange, canonicalSymbol, isDailyOnly } from "../market-rules.mjs?v=4fa19015470d";
 
 export const INTERVALS = { "1": "1m", "5": "5m", "15": "15m", "30": "30m", "60": "1h", "240": "4h", D: "1D", W: "1W", M: "1M" };
 export const cleanSymbol = value => typeof value === "string" ? value.replace(/<\/?em>/gi, "").trim() : "";
