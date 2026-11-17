@@ -1,6 +1,6 @@
-import { addRow } from "../utilities.mjs?v=c2a4fb483601";
-import { createMarketSearch, loadAvailable } from "./market-search.mjs?v=c2a4fb483601";
-export { loadAvailable, subscribeCurrent } from "./market-search.mjs?v=c2a4fb483601";
+import { addRow } from "../utilities.mjs?v=51666aa8d9a2";
+import { createMarketSearch, loadAvailable } from "./market-search.mjs?v=51666aa8d9a2";
+export { loadAvailable, subscribeCurrent } from "./market-search.mjs?v=51666aa8d9a2";
 
 const available = document.querySelector(".available");
 const body = available.tBodies[0];
