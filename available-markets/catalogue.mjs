@@ -1,4 +1,4 @@
-import { canonicalExchange, canonicalSymbol, isDailyOnly, isWidgetRestricted } from "../market-rules.mjs?v=51666aa8d9a2";
+import { canonicalExchange, canonicalSymbol, isDailyOnly, isWidgetRestricted } from "../market-rules.mjs?v=cd8614d864f0";
 
 // Ordinary symbols stay strings. A [symbol, "D"] entry carries an EOD flag
 // without a second download or a separate copy of the symbol catalogue.
