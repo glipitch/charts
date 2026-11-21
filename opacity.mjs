@@ -1,4 +1,4 @@
-import * as utilities from "./utilities.mjs?v=6a88367c3ca9";
+import * as utilities from "./utilities.mjs?v=621928549cbe";
 const input = document.querySelector(".opacity-row > input");
 const span = document.querySelector(".opacity-row > span");
 const label = document.querySelector(".opacity-row > label");
