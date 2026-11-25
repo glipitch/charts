@@ -1,7 +1,7 @@
-import { prepare, findMarkets, resolveMarkets } from "./search.mjs?v=c76b1df3feb1";
+import { prepare, findMarkets, resolveMarkets } from "./search.mjs?v=2e9671392e45";
 let loaded;
 const latestIds = new Map();
-const load = () => loaded ||= fetch(new URL("catalogue.json?v=c76b1df3feb1", import.meta.url)).then(response => {
+const load = () => loaded ||= fetch(new URL("catalogue.json?v=2e9671392e45", import.meta.url)).then(response => {
   if (!response.ok) throw new Error("Could not load markets");
   return response.json();
 }).then(prepare);
