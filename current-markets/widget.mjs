@@ -1,4 +1,4 @@
-import { isWidgetRestricted } from "../market-rules.mjs?v=610a51f02dca";
+import { isWidgetRestricted } from "../market-rules.mjs?v=d85cde1d93d9";
 
 const main = document.querySelector("main");
 const entries = new Map();
